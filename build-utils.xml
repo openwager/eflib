@@ -1,0 +1,159 @@
+<?xml version="1.0" ?>
+
+<project name="build-utils" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" >
+
+    <property name="at" value="@" /> 
+
+    <tstamp>
+      <format property="build.time" pattern="MM/dd/yyyy hh:mm aa ZZ"/>
+    </tstamp>
+    
+    <available file="../.git" type="dir" property="git.present"/>
+    
+    <macrodef name="require">
+      <attribute name="property" />
+      <sequential>
+	<fail unless="@{property}">
+	  Property '@{property}' not defined.
+        </fail>
+      </sequential>
+    </macrodef>
+    
+    <target name="git-revision" description="Store git revision in ${repository.version}" if="git.present">
+      <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+	<arg value="log" /> 
+	<arg value="--pretty=format:%h" /> 
+	<arg value="-n" /> 
+	<arg value="1" />
+      </exec>
+      <condition property="repository.version" value="${git.revision}" else="unknown">
+	<and>
+	  <isset property="git.revision"/>
+	  <length string="${git.revision}" trim="yes" length="0" when="greater"/>
+	</and>
+      </condition>
+    </target>
+    
+    <scriptdef name="parse-environment" language="javascript">
+	     <![CDATA[
+			var environment = project.getProperty ("environment"); 
+			var index = environment.indexOf ("-"); 
+			var root = environment.substring (0, index); 
+			var type = environment.substring (index + 1); 
+			project.setProperty ("environment.root", root); 
+			project.setProperty ("environment.type", type);
+			if (type == "prod" || type == "test" || type == "stage")
+			    project.setProperty ("environment.admin", "ssl");
+	     ]]>		
+    </scriptdef>
+
+<scriptdef name="trim-path" language="javascript">
+  <attribute name="path" />
+  <attribute name="property" /> 
+  <![CDATA[
+           var path = attributes.get ("path"); 
+           var i = path.lastIndexOf (project.getProperty ("file.separator")); 
+           if (i != -1) { 
+             project.setProperty(attributes.get ("property"), path.substring (i + 1)); 
+           } else { 
+             self.log ("ERROR: Path has no directory elements: " + path); 
+           } 
+         ]]>
+</scriptdef>
+
+<scriptdef name="snapshot" language="javascript">
+     <attribute name="text" />
+     <attribute name="property" />
+     <![CDATA[
+       var text = attributes.get("text");
+       var property = attributes.get ("property"); 
+       var index = text.indexOf ("SNAPSHOT"); 
+       if (index != -1) { 
+         //self.log ("Using SNAPSHOT deployment."); 
+         project.setProperty(property, "true"); 
+       } else { 
+         //self.log ("Using RELEASE deployment."); 
+         project.setProperty (property, null); 
+       } 
+     ]]>
+  </scriptdef>
+
+<scriptdef name="substring" language="javascript">
+     <attribute name="text" />
+     <attribute name="start" />
+     <attribute name="end" />
+     <attribute name="property" />
+     <![CDATA[
+       var text = attributes.get("text");
+       var start = attributes.get("start");
+       var end = attributes.get("end") || text.length();
+       project.setProperty(attributes.get("property"), text.substring(start, end));
+     ]]>
+  </scriptdef>
+
+<macrodef name="echo-fileset">
+  <attribute name="filesetref" />
+  <sequential>
+    <pathconvert pathsep="${line.separator}" property="@{filesetref}.echopath">
+      <path>
+	<fileset refid="@{filesetref}" />
+	</path>
+      </pathconvert>
+    <echo> ------- echoing fileset @{filesetref} -------</echo>
+    <echo>${@{filesetref}.echopath}</echo>
+    <echo> ------- echoing fileset @{filesetref} -------</echo>
+    </sequential>
+  </macrodef>
+
+<macrodef name="echo-path">
+  <attribute name="pathref" />
+  <sequential>
+    <echo>echoing path=@{pathref}</echo>
+    <for param="fromfile">
+      <path refid="@{pathref}" />
+      <sequential>
+	<echo>@{fromfile}</echo>
+	</sequential>
+      </for>
+    </sequential>
+  </macrodef>
+
+
+<macrodef name="scp-file">
+  <attribute name="file" />
+  <attribute name="path" />
+  <attribute name="passphrase" />
+  <attribute name="host" />
+  <attribute name="user" />
+  <sequential>
+    <trim-path path="@{file}" property="file2" />
+    <echo>
+From: @{file}
+To:   @{user}${at}@{host}:@{path}
+</echo>
+
+<!--
+         keyfile="${user.home}/.ssh/id_rsa"
+-->
+    <scp file="@{file}"
+         trust="true"
+         passphrase="@{passphrase}"
+         todir="@{user}${at}@{host}:/tmp/${file2}"
+keyfile="${user.home}/etherfirma.pem"
+         />
+    <sshexec trust="true"
+             host = "@{host}"
+             username="@{user}"
+keyfile="${user.home}/etherfirma.pem"
+             passphrase="@{passphrase}"
+             command="mv /tmp/${file2} @{path}"
+             />
+<!--
+             keyfile="${user.home}/.ssh/id_rsa"
+-->
+  </sequential>
+</macrodef>
+
+</project>
+
+<!-- EOF -->

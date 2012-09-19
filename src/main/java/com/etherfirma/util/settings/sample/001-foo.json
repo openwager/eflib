@@ -1,0 +1,15 @@
+{
+  "foo": "bar", 
+  "baz": "boo", 
+  "person": { 
+    "name": "Lee Crawford", 
+    "age": 16, 
+    "favoriteColor": "green", 
+    "address": { 
+      "addr1": "1 main street", 
+      "city": "san francisco", 
+      "state": "CA", 
+      "zip": 94107
+    }, 
+    "male": true
+}}

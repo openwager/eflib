@@ -1,0 +1,9 @@
+{
+  facebook: { 
+    appId: "sdf2", 
+    props: { 
+      a: 1, 
+      b: 2
+   }
+  }
+  }

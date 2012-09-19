@@ -1,0 +1,240 @@
+<?xml version="1.0" ?>
+
+<project name="lib" default="help" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" >
+
+	<!-- Load in their environment-specific propeties -->
+
+	<property file="${user.home}/user.properties" />
+	<property file="config.properties" /> 
+
+	<include file="build-utils.xml" />
+	<include file="build-repos.xml" />
+
+	<!-- Determine the name of our artifacts based on the version -->
+
+	<property name="output" value="eflib-${version}" />
+	<property name="pom.group" value="etherfirma" />
+	<property name="pom.artifact" value="eflib" />
+	<property name="javac.debug" value="true" /> 
+	<property name="javac.debug.level" value="lines, vars, source" /> 
+
+	<snapshot text="${output}" property="snapshot" />
+	
+	<!-- Make sure the essentials are defined --> 
+		
+	<require property="maven.username" /> 
+	<require property="maven.password" /> 
+
+	<!-- What are we building --> 
+
+	<echo>
+Product: ${output}
+Maven:   ${pom.group}:${pom.artifact}:${output}:jar
+  	</echo>
+
+	<!-- PATHS -->
+
+	<property name="src.dir" value="${basedir}/src/main/java" />
+	<property name="pom.dir" value="${basedir}/src/main/pom" />
+	<property name="target.dir" value="${basedir}/target" />
+	<property name="javadoc.dir" value="${target.dir}/javadocs" />
+	<property name="classes.dir" value="${target.dir}/classes" />
+	<property name="lib.dir" value="${target.dir}/lib" />
+
+	<!-- TARGET: help --> 
+
+	<target name="help" depends="" >
+	  <echo>
+Available targets: 
+
+  clean              - clean intermediate files
+  build              - builds the Java sources
+  package            - packages up the jar
+  maven-local        - install into local Maven repo
+  maven-global       - deploy to remote Maven repo
+	  </echo>
+	</target>
+
+	<!-- TARGET: clean -->
+
+	<target name="clean" depends="" >
+		<delete dir="${target.dir}" failonerror="false" />
+		<delete dir="${classes.dir}" failonerror="false" />
+		<delete dir="${lib.dir}" failonerror="false" />
+	</target>
+
+	<!-- TARGET: setup -->
+
+	<target name="setup" >
+		<mkdir dir="${target.dir}" />
+	</target>
+
+	<target name="maven-dependencies" depends="setup">
+		<mkdir dir="${lib.dir}" />
+		<artifact:dependencies 
+		   filesetId="dependency.fileset" 
+		   sourcesFilesetId="sources.dependency.fileset" 
+		   javadocFilesetId="javadoc.dependency.fileset" 
+		   versionsId="dependency.versions" useScope="runtime"
+		>
+
+			<dependency groupId="${efcore.group}" artifactId="${efcore.artifact}" version="${efcore.version}" />
+			<dependency groupId="${eflattice.group}" artifactId="${eflattice.artifact}" version="${eflattice.version}" />
+			<dependency groupId="${eftessera.group}" artifactId="${eftessera.artifact}" version="${eftessera.version}" />
+
+			<dependency groupId="log4j" artifactId="log4j" version="${log4j.version}" />
+			<dependency groupId="org.mozilla" artifactId="rhino" version="${rhino.version}" />
+			<dependency groupId="org.json" artifactId="json" version="${json.version}" />
+			<dependency groupId="javaee" artifactId="javaee-api" version="5" />
+			<dependency groupId="org.testng" artifactId="testng" version="6.5.2" />
+
+			<dependency groupId="javax.transaction" artifactId="jta" version="1.1" />
+			<dependency groupId="commons-codec" artifactId="commons-codec" version="${commons-codec.version}" />
+			<dependency groupId="commons-httpclient" artifactId="commons-httpclient" version="${commons-httpclient.version}" />
+			<dependency groupId="commons-logging" artifactId="commons-logging" version="${commons-logging.version}" />
+			<dependency groupId="javax.mail" artifactId="mail" version="${javax.mail.version}" /> 			
+			<dependency groupId="javax.activation" artifactId="activation" version="${javax.activation.version}" /> 
+		</artifact:dependencies>
+		<copy todir="${lib.dir}">
+			<fileset refid="dependency.fileset" />
+			<mapper type="flatten" />
+		</copy>
+	</target>
+
+	<target name="copy-resources" description="" depends="maven-dependencies">
+		<patternset id="all.resources">
+			<include name="**/*.properties" />
+			<include name="**/*.gif" />
+			<include name="**/*.png" />
+			<include name="**/*.jpg" />
+			<include name="**/*.txt" />
+			<include name="**/*.wav" />
+			<include name="**/*.xml" />
+			<include name="**/*.tld" />
+		</patternset>
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}">
+				<patternset refid="all.resources" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- TARGET: build -->
+
+	<target name="build" description="" depends="copy-resources" >
+		<mkdir dir="${classes.dir}" />
+		<!-- Compile the Java classes -->
+		<javac destdir="${classes.dir}" source="1.5" debug="${javac.debug}" debugLevel="${javac.debugLevel}" includeantruntime="false">
+			<classpath>
+				<fileset dir="${lib.dir}">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			<src path="${src.dir}"/>
+			<exclude name=".dependency-info/**"/>
+		</javac>
+	</target>
+
+	<!-- TARGET: javadoc -->
+
+	<target name="javadoc" description="" depends="build" >
+		<mkdir dir="${javadoc.dir}" />
+		<javadoc destdir="${javadoc.dir}" source="1.6">
+			<classpath>
+				<fileset dir="${lib.dir}">
+					<include name="**/*.jar"/>
+				</fileset>
+				<fileset dir="${classes.dir}" /> 
+			</classpath>
+			<package name="*"/>
+			<sourcepath>
+				<pathelement path="${src.dir}"/>
+			</sourcepath>
+			<header>
+				<![CDATA[
+				 <h1>Making Fun | lib</h1>
+			 	]]>
+			</header>
+			<bottom>
+				<![CDATA[
+			  	Copyright &copy; 2011, Making Fun, Inc. All rights reserved.
+				]]>
+			</bottom>
+		</javadoc>
+		<jar destfile="${target.dir}/${output}-javadoc.jar" basedir="${javadoc.dir}"/>
+	</target>
+
+	<target name="package" depends="build">
+		<jar destfile="${target.dir}/${output}.jar">
+			<manifest>
+				<attribute name="Build-Date" value="${build.time}"/>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Build-Environment" value="${user}"/>
+				<attribute name="Version" value="${version}"/>
+			</manifest>
+			<fileset dir="${classes.dir}">
+			</fileset>
+		</jar>
+	</target>
+	
+	<!-- TARGET: sources -->
+	
+	<target name="sources" depends="build">
+		<jar destfile="${target.dir}/${output}-sources.jar">
+			<fileset dir="${src.dir}" />
+		</jar>
+	</target>
+	
+	<!-- TARGET: create pom -->
+	
+	<target name="make-pom" depends="setup" >
+		<filter token="version" value="${version}" />
+		<filter token="pom.group" value="${pom.group}" /> 
+		<filter token="pom.artifact" value="${pom.artifact}" /> 
+		<copy todir="${target.dir}" file="${pom.dir}/pom.xml" filtering="true" />
+		<artifact:pom id="mypom" file="${target.dir}/pom.xml" />
+	</target>
+		
+	<!-- TARGET: install -->
+	
+	<target name="maven-local" depends="make-pom, package, javadoc, sources">
+		<artifact:install file="${target.dir}/${output}.jar">
+			<pom refid="mypom"/>
+			<attach file="${target.dir}/${output}-sources.jar" type="jar" classifier="sources"/>
+			<attach file="${target.dir}/${output}-javadoc.jar" type="jar" classifier="javadoc"/>
+		</artifact:install>
+	</target>
+	
+	<!-- TARGET: maven-global-snapshot -->
+	
+	<target name="maven-global-snapshot" depends="maven-local" if="snapshot">
+		<echo>Deploying to SNAPSHOT</echo>
+		<artifact:deploy file="${target.dir}/${output}.jar">
+			<remoteRepository refid="makingfun.snapshots" />
+			<pom refid="mypom"/>
+			<attach file="${target.dir}/${output}-sources.jar" type="jar" classifier="sources"/>
+			<attach file="${target.dir}/${output}-javadoc.jar" type="jar" classifier="javadoc"/>
+		</artifact:deploy>
+	</target>
+	
+	<!-- TARGET: maven-global-release -->
+	
+	<target name="maven-global-release" depends="maven-local" unless="snapshot" >
+		<echo>Deploying to RELEASE</echo>
+		<artifact:deploy file="${target.dir}/${output}.jar">
+			<remoteRepository refid="makingfun.releases" />
+			<pom refid="mypom"/>
+			<attach file="${target.dir}/${output}-sources.jar" type="jar" classifier="sources"/>
+			<attach file="${target.dir}/${output}-javadoc.jar" type="jar" classifier="javadoc"/>
+		</artifact:deploy>
+	</target>
+	
+	<!-- TARGET: deploy -->
+	
+	<target name="maven-global" depends="maven-global-snapshot,maven-global-release">
+		<!-- EMPTY -->
+	</target>
+
+</project>
+
+<!-- EOF -->

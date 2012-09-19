@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+
+<project name="build-repos" default="build" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" >
+
+
+  <artifact:remoteRepository id="java.net" url="http://download.java.net/maven/2/" /> 
+
+  <artifact:localRepository id="local" path="${user.home}/.m2/repository/" /> 
+
+<!--
+	<artifact:remoteRepository id="makingfun.thirdparty" url="http://util.makingfun.com:8081/nexus/content/repositories/thirdparty/" >
+		<authentication username="${maven.username}" password="${maven.password}" />
+	</artifact:remoteRepository>
+	
+	<artifact:remoteRepository id="makingfun.releases" url="http://util.makingfun.com:8081/nexus/content/repositories/releases/" >
+		<authentication username="${maven.username}" password="${maven.password}" />
+	</artifact:remoteRepository>
+	
+	<artifact:remoteRepository id="makingfun.snapshots" url="http://util.makingfun.com:8081/nexus/content/repositories/snapshots/" >
+		<authentication username="${maven.username}" password="${maven.password}" />
+	</artifact:remoteRepository>
+-->
+
+</project>
+
+<!-- EOF -->
