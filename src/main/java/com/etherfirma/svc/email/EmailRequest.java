@@ -20,18 +20,18 @@ public class EmailRequest
 	{
 		return; 
 	}
+		
+	protected List<String> addressees = new ArrayList<String> (); 
+	public List<String> getAddressees () { return addressees; } 
 	
-	protected String addressee; 
-	public String getAddressee () { return this.addressee; } 
-
-	public
-	void setAddressee (final String addressee) 
+	public 
+	void addAddressee (final String addressee) 
 		throws AddressException
 	{ 
 		EmailUtil.validateAddress (addressee); 
-		this.addressee = addressee; 
+		addressees.add (addressee); 
 		return;
-	} 
+	}
 	
 	protected String template; 
 	public String getTemplate () { return this.template; } 
@@ -53,7 +53,7 @@ public class EmailRequest
 	protected void buildHash (HashBuilder hash)
 	{
 		super.buildHash (hash);
-		hash.add (addressee); 
+		hash.add (addressees); 
 		hash.add (template); 
 		hash.add (agent); 
 		hash.add (state); 
@@ -65,8 +65,8 @@ public class EmailRequest
 	protected void paramString (StringBuffer buf) 
 	{
 		super.paramString (buf);
-		buf.append (",addressee=");
-		buf.append (addressee);
+		buf.append (",addressees=");
+		buf.append (addressees);
 		buf.append (",template=");
 		buf.append (template);
 		buf.append (",agent=");

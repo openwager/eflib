@@ -45,7 +45,7 @@ public class Test
 		throws Exception
 	{
 		final EmailRequest r = new EmailRequest (); 
-		r.setAddressee ("lee.crawford@gmail.com"); 
+		r.addAddressee ("lee.crawford@gmail.com"); 
 		r.setState (EmailRequestState.UNSENT); 		
 		return r; 
 	}

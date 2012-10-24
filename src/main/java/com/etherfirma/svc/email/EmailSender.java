@@ -138,7 +138,9 @@ public class EmailSender
 
 		// Set the addressee on the message
 		
-		message.addRecipient (RecipientType.TO, new InternetAddress (er.getAddressee ()));
+		for (final String addressee : er.getAddressees()) { 
+			message.addRecipient (RecipientType.TO, new InternetAddress (addressee));
+		}
 		
 		// Merge the template body/bodies with the properties from the request
 		
