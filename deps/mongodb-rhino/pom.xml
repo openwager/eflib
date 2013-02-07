@@ -1,6 +1,0 @@
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>@pom.group@</groupId>
-  <artifactId>@pom.artifact@</artifactId>
-  <version>@version@</version>
-</project>
