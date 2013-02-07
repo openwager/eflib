@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+
+<project name="mongodb-rhino" default="deploy-mongodb" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" >
+ 
+  <property file="${user.home}/build.properties" />
+  <include file="../../build-repos.xml" />
+  
+  <property name="version" value="R96" /> 
+  <property name="artifact" value="mongodb-rhino-${version}" /> 
+  <property name="url" value="http://mongodb-rhino.googlecode.com/files/${artifact}.zip" /> 
+
+  <property name="target.dir" value="${basedir}/target" />
+  <property name="src.dir" value="${basedir}/src" /> 
+  <property name="pom.dir" value="${src.dir}/main/pom" /> 
+
+  <!-- TARGET: clean --> 
+
+  <target name="clean">
+    <delete dir="${target.dir}" failonerror="false" />
+  </target>
+
+  <!-- TARGET: fetch --> 
+
+  <target name="fetch">
+    <mkdir dir="${target.dir}" /> 
+      <exec executable="curl">
+	<arg value="${url}" /> 
+	<arg value="-o"/>
+	<arg value="${target.dir}/${artifact}.zip"/>
+      </exec>
+      <exec executable="unzip">
+	<arg value="${target.dir}/${artifact}.zip" /> 
+	<arg value="-d" /> 
+	<arg value="${target.dir}" /> 
+      </exec>
+  </target>
+
+  <!-- TARGET: package --> 
+
+  <target name="package" depends="fetch">
+    <copy file="${target.dir}/lib/com.mongodb.rhino.jar" tofile="${target.dir}/${artifact}.jar" /> 
+    <jar destfile="${target.dir}/${artifact}-sources.jar" basedir="${target.dir}/src" />
+    <jar destfile="${target.dir}/${artifact}-javadoc.jar" basedir="${target.dir}/doc" />
+  </target>
+
+  <!-- TARGET: pom-mongodb-rhino -->
+
+  <target name="pom-mongodb-rhino">
+    <filter token="pom.group" value="etherfirma" />
+    <filter token="pom.artifact" value="mongodb-rhino" /> 
+    <filter token="version" value="R96" />
+    <copy tofile="${target.dir}/mongodb-rhino-pom.xml" file="${pom.dir}/pom.xml" filtering="true" />
+    <artifact:pom id="mongodb-rhino.pom" file="${target.dir}/mongodb-rhino-pom.xml" />
+  </target>
+  
+  <!-- TARGET: deploy-mongodb-rhino -->
+  
+  <target name="deploy-mongodb-rhino" depends="pom-mongodb-rhino,package">
+    <artifact:deploy file="${target.dir}/${artifact}.jar">
+      <pom refid="mongodb-rhino.pom" />
+      <artifact:remoteRepository refid="etherfirma.thirdparty" />
+      <attach file="${target.dir}/${artifact}-sources.jar" type="jar" classifier="sources"/>
+      <attach file="${target.dir}/${artifact}-javadoc.jar" type="jar" classifier="javadoc"/>
+    </artifact:deploy>
+  </target>
+
+</project>
