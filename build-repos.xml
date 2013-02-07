@@ -8,18 +8,18 @@
   <artifact:localRepository id="local" path="${user.home}/.m2/repository/" /> 
 
 <!--
-	<artifact:remoteRepository id="makingfun.thirdparty" url="http://util.makingfun.com:8081/nexus/content/repositories/thirdparty/" >
-		<authentication username="${maven.username}" password="${maven.password}" />
-	</artifact:remoteRepository>
-	
-	<artifact:remoteRepository id="makingfun.releases" url="http://util.makingfun.com:8081/nexus/content/repositories/releases/" >
-		<authentication username="${maven.username}" password="${maven.password}" />
-	</artifact:remoteRepository>
-	
-	<artifact:remoteRepository id="makingfun.snapshots" url="http://util.makingfun.com:8081/nexus/content/repositories/snapshots/" >
+	<artifact:remoteRepository id="etherfirma.thirdparty" url="http://maven.etherfirma.com:8081/nexus/content/repositories/thirdparty/" >
 		<authentication username="${maven.username}" password="${maven.password}" />
 	</artifact:remoteRepository>
 -->
+
+	<artifact:remoteRepository id="etherfirma.releases" url="http://maven.etherfirma.com:8081/nexus/content/repositories/releases/" >
+		<authentication username="${maven.username}" password="${maven.password}" />
+	</artifact:remoteRepository>
+	
+	<artifact:remoteRepository id="etherfirma.snapshots" url="http://maven.etherfirma.com:8081/nexus/content/repositories/snapshots/" >
+		<authentication username="${maven.username}" password="${maven.password}" />
+	</artifact:remoteRepository>
 
 </project>
 

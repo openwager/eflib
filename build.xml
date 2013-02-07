@@ -4,7 +4,7 @@
 
 	<!-- Load in their environment-specific propeties -->
 
-	<property file="${user.home}/user.properties" />
+	<property file="${user.home}/build.properties" />
 	<property file="config.properties" /> 
 
 	<include file="build-utils.xml" />
@@ -82,18 +82,18 @@ Available targets:
 			<dependency groupId="${eflattice.group}" artifactId="${eflattice.artifact}" version="${eflattice.version}" />
 			<dependency groupId="${eftessera.group}" artifactId="${eftessera.artifact}" version="${eftessera.version}" />
 
-			<dependency groupId="log4j" artifactId="log4j" version="${log4j.version}" />
-			<dependency groupId="org.mozilla" artifactId="rhino" version="${rhino.version}" />
-			<dependency groupId="org.json" artifactId="json" version="${json.version}" />
-			<dependency groupId="javaee" artifactId="javaee-api" version="5" />
-			<dependency groupId="org.testng" artifactId="testng" version="6.5.2" />
+			<dependency groupId="${log4j.group}" artifactId="${log4j.artifact}" version="${log4j.version}" />
+			<dependency groupId="${rhino.group}" artifactId="${rhino.artifact}" version="${rhino.version}" />
+			<dependency groupId="${json.group}" artifactId="${json.artifact}" version="${json.version}" />
+			<dependency groupId="${javaee.group}" artifactId="${javaee.artifact}" version="${javaee.version}" />
+			<dependency groupId="${testng.group}" artifactId="${testng.artifact}" version="${testng.version}" />
 
-			<dependency groupId="javax.transaction" artifactId="jta" version="1.1" />
-			<dependency groupId="commons-codec" artifactId="commons-codec" version="${commons-codec.version}" />
-			<dependency groupId="commons-httpclient" artifactId="commons-httpclient" version="${commons-httpclient.version}" />
-			<dependency groupId="commons-logging" artifactId="commons-logging" version="${commons-logging.version}" />
-			<dependency groupId="javax.mail" artifactId="mail" version="${javax.mail.version}" /> 			
-			<dependency groupId="javax.activation" artifactId="activation" version="${javax.activation.version}" /> 
+			<dependency groupId="${jta.group}" artifactId="${jta.artifact}" version="${jta.version}" />
+			<dependency groupId="${commons-codec.group}" artifactId="${commons-codec.artifact}" version="${commons-codec.version}" />
+			<dependency groupId="${commons-httpclient.group}" artifactId="${commons-httpclient.artifact}" version="${commons-httpclient.version}" />
+			<dependency groupId="${commons-logging.group}" artifactId="${commons-logging.artifact}" version="${commons-logging.version}" />
+			<dependency groupId="${javax.mail.group}" artifactId="${javax.mail.artifact}" version="${javax.mail.version}" /> 			
+			<dependency groupId="${javax.activation.group}" artifactId="${javax.activation.artifact}" version="${javax.activation.version}" /> 
 		</artifact:dependencies>
 		<copy todir="${lib.dir}">
 			<fileset refid="dependency.fileset" />
@@ -152,12 +152,12 @@ Available targets:
 			</sourcepath>
 			<header>
 				<![CDATA[
-				 <h1>Making Fun | lib</h1>
+				 <h1>Etherfirma, LLC | lib</h1>
 			 	]]>
 			</header>
 			<bottom>
 				<![CDATA[
-			  	Copyright &copy; 2011, Making Fun, Inc. All rights reserved.
+			  	Copyright &copy; 2013, Etherfirma, LLC. All rights reserved.
 				]]>
 			</bottom>
 		</javadoc>
@@ -210,7 +210,7 @@ Available targets:
 	<target name="maven-global-snapshot" depends="maven-local" if="snapshot">
 		<echo>Deploying to SNAPSHOT</echo>
 		<artifact:deploy file="${target.dir}/${output}.jar">
-			<remoteRepository refid="makingfun.snapshots" />
+			<remoteRepository refid="etherfirma.snapshots" />
 			<pom refid="mypom"/>
 			<attach file="${target.dir}/${output}-sources.jar" type="jar" classifier="sources"/>
 			<attach file="${target.dir}/${output}-javadoc.jar" type="jar" classifier="javadoc"/>
@@ -222,7 +222,7 @@ Available targets:
 	<target name="maven-global-release" depends="maven-local" unless="snapshot" >
 		<echo>Deploying to RELEASE</echo>
 		<artifact:deploy file="${target.dir}/${output}.jar">
-			<remoteRepository refid="makingfun.releases" />
+			<remoteRepository refid="etherfirma.releases" />
 			<pom refid="mypom"/>
 			<attach file="${target.dir}/${output}-sources.jar" type="jar" classifier="sources"/>
 			<attach file="${target.dir}/${output}-javadoc.jar" type="jar" classifier="javadoc"/>
