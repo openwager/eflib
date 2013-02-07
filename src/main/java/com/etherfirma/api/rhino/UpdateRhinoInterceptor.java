@@ -73,8 +73,10 @@ public class UpdateRhinoInterceptor
 		// Embed a reference to the ServletContext just in case
 
 		final ServletContext sc = dc.getDispatcher ().getServletContext (); 
-		final Object wrapped = Context.javaToJS (sc, sharedScope);
+		Object wrapped = Context.javaToJS (sc, sharedScope);
 		ScriptableObject.putProperty(sharedScope, "servletContext", wrapped);
+		wrapped = Context.javaToJS (dc, sharedScope); 
+		ScriptableObject.putProperty (sharedScope, "_dc", wrapped); 
 		
 		if (hasProperty (PROP.PATH)) { 
 			loadScript (getProperty (PROP.PATH), disp, sharedScope, output); 
@@ -93,6 +95,7 @@ public class UpdateRhinoInterceptor
 		}
 
 		ScriptableObject.deleteProperty (sharedScope, "servletContext"); 		
+		ScriptableObject.deleteProperty (sharedScope, "_dc"); 		
 		
 		if (req != null && req.getParameter("plainTxt") != null) {
 			for (String line: output) {
@@ -111,7 +114,7 @@ public class UpdateRhinoInterceptor
 	 * @param sharedScope
 	 */
 
-	public 
+	public static
 	void loadScript (final String path, final Dispatcher disp, final ScriptableObject sharedScope, final List<String> output)
 		throws Exception
 	{

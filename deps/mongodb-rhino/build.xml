@@ -48,7 +48,7 @@
   <target name="pom-mongodb-rhino">
     <filter token="pom.group" value="etherfirma" />
     <filter token="pom.artifact" value="mongodb-rhino" /> 
-    <filter token="version" value="R96" />
+    <filter token="version" value="${version}" />
     <copy tofile="${target.dir}/mongodb-rhino-pom.xml" file="${pom.dir}/pom.xml" filtering="true" />
     <artifact:pom id="mongodb-rhino.pom" file="${target.dir}/mongodb-rhino-pom.xml" />
   </target>
