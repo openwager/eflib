@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+
+<project name="ehcache" default="deploy-mongodb" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" >
+ 
+  <property file="${user.home}/build.properties" />
+  <include file="../../build-repos.xml" />
+  
+  <property name="version" value="2.8.0" /> 
+  <property name="artifact" value="ehcache-core-${version}" /> 
+
+  <property name="target.dir" value="${basedir}/target" />
+  <property name="src.dir" value="${basedir}/src" /> 
+  <property name="pom.dir" value="${src.dir}/main/pom" /> 
+
+  <!-- TARGET: clean --> 
+
+  <target name="clean">
+    <delete dir="${target.dir}" failonerror="false" />
+  </target>
+
+  <!-- TARGET: fetch --> 
+
+  <target name="fetch">
+    <mkdir dir="${target.dir}" /> 
+      <exec executable="svn">
+	<arg value="checkout" />  
+	<arg value="http://svn.terracotta.org/svn/ehcache/trunk" />  
+	<arg value="${target.dir}/ehcache" />  
+      </exec>
+  </target>
+
+  <!-- TARGET: pom-ehcache -->
+
+  <target name="pom-ehcache">
+    <filter token="pom.group" value="etherfirma" />
+    <filter token="pom.artifact" value="ehcache-core" /> 
+    <filter token="version" value="${version}" />
+    <copy tofile="${target.dir}/ehcache-pom.xml" file="${pom.dir}/pom.xml" filtering="true" />
+    <artifact:pom id="ehcache.pom" file="${target.dir}/ehcache-pom.xml" />
+  </target>
+  
+  <!-- TARGET: deploy-ehcache -->
+  
+  <target name="deploy-ehcache" depends="pom-ehcache">
+    <artifact:deploy file="${target.dir}/ehcache/ehcache/ehcache-core/target/${artifact}.jar">
+      <pom refid="ehcache.pom" />
+      <artifact:remoteRepository refid="etherfirma.thirdparty" />
+      <attach file="${target.dir}/ehcache/ehcache/ehcache-core/target/${artifact}-sources.jar" type="jar" classifier="sources"/>
+      <attach file="${target.dir}/ehcache/ehcache/ehcache-core/target/${artifact}-javadoc.jar" type="jar" classifier="javadoc"/>
+    </artifact:deploy>
+  </target>
+
+</project>
