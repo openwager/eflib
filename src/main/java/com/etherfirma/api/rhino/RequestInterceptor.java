@@ -33,7 +33,8 @@ public class RequestInterceptor
 	interface PROP
 	{
 		public String JAVASCRIPT_FUNCTION = "javascript.function";
-		public String SILENCE = "silence"; 
+		public String SILENCE = "silence";
+		public String THREADLOCAL_DC = "threadLocal.dc";
 	}
 	
 	
@@ -46,13 +47,21 @@ public class RequestInterceptor
 	
 	protected boolean silence = false; 
 	
+	protected boolean addThreadLocal = false;
+	
 	public
 	void init ()
 	{
 		javascriptFunction = getProperty (PROP.JAVASCRIPT_FUNCTION, DEFAULT.JAVASCRIPT_FUNCTION);
+		
 		if (hasProperty (PROP.SILENCE)) { 
 			silence = Boolean.parseBoolean (getProperty (PROP.SILENCE)); 
 		}
+		
+		if (hasProperty (PROP.THREADLOCAL_DC)) { 
+			addThreadLocal = Boolean.parseBoolean (getProperty (PROP.THREADLOCAL_DC));
+		}
+		
 		return; 
 	}
 	
@@ -77,23 +86,37 @@ public class RequestInterceptor
 			Logger logger = Logger.getLogger("javascript");
 			threadScope.put("log", threadScope, logger);
 
-//			threadScope.put ("context", threadScope, Context.javaToJS (c, threadScope)); 
-//			threadScope.put ("threadScope", threadScope, Context.javaToJS (threadScope, threadScope)); 
-		
-			// Invoke the handler
+			String errmsg = null;
+			if (addThreadLocal) {
+				String javascriptContextSetterFunction = "CORE.contextSetter";
+				final Object possibleContextSetter = c.evaluateString (threadScope, javascriptContextSetterFunction, "", 1, null);
+				if ( possibleContextSetter instanceof Function) {
+					final Function contextSetter = (Function) possibleContextSetter;
+				    final Object fArgs[] = { req, res, dc };
+				    contextSetter.call (c, threadScope, threadScope, fArgs);
+				} else {
+					String error = "Undefined or not a function: " + javascriptContextSetterFunction; 
+					logger.error (error);
+					errmsg += error + " - ";
+				}
+			}
 			
 			String response = null; 
-			
-			final Object o1 = c.evaluateString (threadScope, javascriptFunction, "", 1, null) ;						
-			if (! (o1 instanceof Function)) {
-				final String errmsg = "Undefined or not a function: " + javascriptFunction; 
-				logger.error (errmsg);
-			    response = "{ 'error': '" + errmsg + "' }"; 
-			} else {
+
+			final Object possibleFunction = c.evaluateString (threadScope, javascriptFunction, "", 1, null) ;						
+			if (possibleFunction instanceof Function) {
 			    final Object functionArgs[] = { req, res, dc };
-			    final Function f = (Function) o1;
+			    final Function f = (Function) possibleFunction;
 			    final Object result = f.call (c, threadScope, threadScope, functionArgs);
 		    	response = Context.toString (result);
+			} else {
+				String error = "Undefined or not a function: " + javascriptFunction; 
+				logger.error (error);
+				errmsg += error;
+			}
+			
+			if(null != errmsg) {
+			    response = "{ 'error': '" + errmsg + "' }"; 
 			}
 			
 			if (! silence) { 

@@ -39,11 +39,13 @@ public class OAuthFacebookRedirect2Interceptor
 	
 	protected String deniedUri; 
 	protected String errorUri; 
+	protected boolean debug; 
 	
 	public
 	void init ()
 		throws Exception
 	{
+		debug = "true".equals (getProperty (PROP.DEBUG)); 
 		deniedUri = require (PROP.DENIED);
 		errorUri = require (PROP.ERROR); 
 		return; 
@@ -58,7 +60,7 @@ public class OAuthFacebookRedirect2Interceptor
 	public static
 	void logRequest (final Logger logger, final HttpServletRequest req)
 	{
-		logger.info ("INVOKED with:"); 
+		logger.info ("INVOKED " + req.getRequestURI() + " with:"); 
 		for (final Object param : req.getParameterMap ().keySet ()) { 
 			final String val = req.getParameter ((String) param); 
 			logger.info ("  parameter '" + param + "' = '" + val + "'"); 
@@ -71,12 +73,19 @@ public class OAuthFacebookRedirect2Interceptor
 	Alteration intercept(HttpServletRequest req, HttpServletResponse res, DispatchContext dc)
 		throws Exception 
 	{
-//		logRequest (logger, req); 
+		if (debug) {
+			logRequest (logger, req); 
+		}
 		
-		// First check and see if the request was denied
+		// If the request contains an 'error_reason' parameter then the authentication failed. 
+		// Most likely this was because the user denied the application. 
 		
-		final String errorReason = req.getParameter ("error_reason"); 
+		final String errorReason = req.getParameter ("error_reason");
+		
 		if (! StringUtil.isEmpty (errorReason)) { 
+			if (debug) { 
+				logger.info("error_reason=" + errorReason); 
+			}
 			if ("user_denied".equals (errorReason)) { 
 				res.sendRedirect (req.getContextPath () + "/" + deniedUri); 
 				return ABORT;  
@@ -85,8 +94,7 @@ public class OAuthFacebookRedirect2Interceptor
 	
 		// Load the settings (contains the appId and appSecret)
 		
-		final Settings settings = SettingsUtil.getSettings (req);
-		
+		final Settings settings = SettingsUtil.getSettings (req);		
 		final String appId = settings.lookup ("facebook.appId", String.class, true); 
 		final String appSecret = settings.lookup ("facebook.appSecret", String.class, true);
 		final String facebookHandle = settings.lookup ("facebook.facebookHandle", String.class, true); 
@@ -98,7 +106,6 @@ public class OAuthFacebookRedirect2Interceptor
 		
 		try { 
 			final FacebookAPI fb = new FacebookAPI ("graph.facebook.com/oauth/access_token"); 
-			fb.setDebug (true); 
 			fb.setParameter ("client_id", appId); 
 			fb.setParameter ("client_secret", appSecret); 
 			final String code = req.getParameter ("code"); 
@@ -130,8 +137,15 @@ public class OAuthFacebookRedirect2Interceptor
 
 			final String redirectUrl = req.getRequestURL ().toString () + paramsString;
 			fb.setParameter ("redirect_uri", redirectUrl); 
+
+//			if (debug) { 
+//				fb.setDebug (true); 				
+//			}
 			
-			fbresponse = fb.invoke (); 
+			fbresponse = fb.invoke ();
+			if (debug) { 
+				logger.info ("response: " + fbresponse); 
+			}
 	
 //			logger.info("accessToken response from facebook = " + response.toString());
 //			accessToken =  response.toString().split("=")[1]; //second half of access_token=11087123412341234132434
@@ -153,12 +167,19 @@ public class OAuthFacebookRedirect2Interceptor
 		} else {
 			paramsString += "&authenticated=true";
 		}
+//		paramsString += "&code=" + req.getParameter("code");
+		
 //		paramsString += "&accessToken=" + URLEncoder.encode (accessToken, "UTF-8");
 		
 		fbresponse = fbresponse.replace ("access_token", "accessToken"); 
 		paramsString += "&" + fbresponse; 
 		
-		res.sendRedirect (redir + paramsString);
+		final String url = redir + paramsString; 
+		if (debug) { 
+			logger.info ("redirecting to: " + url); 
+		}
+		//res.sendRedirect (url);
+		RedirectFacebookAuthUrl2Interceptor.sendRedirectPage (res, url, debug); 
 		return ABORT;
 	}	
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 import com.tessera.intercept.*;
+import com.tessera.intercept.InterceptorSupport.PROP;
 
 /**
  * 
@@ -21,6 +22,16 @@ public class IfFacebookAuthorized2Interceptor
 	{
 		super(props);
 	}
+	
+	protected boolean debug = false; 
+	
+	public
+	void init ()
+		throws Exception
+	{
+		debug = "true".equals (getProperty (PROP.DEBUG)); 
+		return; 
+	}
 
 	@Override
 	public 
@@ -28,7 +39,11 @@ public class IfFacebookAuthorized2Interceptor
 			throws Exception 
 	{		
 		final String authenticated = req.getParameter ("authenticated"); 
-		return "true".equals (authenticated); 
+		final boolean result = "true".equals (authenticated);
+		if (debug) { 
+			logger.info ("authenticated = " + result); 
+		}
+		return result;  
 
 		//		if (req.getParameter ("authenticated") == null) {
 //			return false;

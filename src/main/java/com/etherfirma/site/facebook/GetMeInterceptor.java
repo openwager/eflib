@@ -35,20 +35,23 @@ public class GetMeInterceptor
 	Alteration intercept (HttpServletRequest req, HttpServletResponse res, DispatchContext dc)
 		throws Exception 
 	{
-		final String accessToken = req.getParameter ("accessToken");
+		final JSONObject blob = (JSONObject) req.getAttribute ("blob"); 
+		final String accessToken = blob.getString ("oauth_token"); 
 		
-		if (! StringUtil.isEmpty (accessToken)) { 
-			req.setAttribute ("accessToken", accessToken); 
+		if (blob != null) { 
 			try { 
-				final FacebookAPI  fb = new FacebookAPI ("graph.facebook.com/me"); 
-				final JSONObject obj = fb.invokeToJson (accessToken, null);
-				req.setAttribute ("fbid", obj.get ("id")); 
-				req.setAttribute ("fbuser", obj);
+//				final FacebookAPI  fb = new FacebookAPI ("graph.facebook.com/me"); 
+//				final JSONObject obj = fb.invokeToJson (accessToken, null);
+//				req.setAttribute ("fbid", obj.get ("id")); 
+//				req.setAttribute ("fbuser", obj);
+				final JSONObject fbuser = FacebookUtil.getMe (accessToken); 
+				req.setAttribute ("fbuser", fbuser); 
 			}
 			catch (final Exception e) { 
 				logger.warn (e.getMessage (), e); 
 			}
 		}
+		
 		return NO_ALTERATION;
 	}
 }

@@ -1,5 +1,6 @@
 package com.etherfirma.site.facebook;
 
+import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
@@ -29,13 +30,25 @@ public class RedirectFacebookAuthUrl2Interceptor
 		super(props);
 		return; 
 	}
+
+	protected boolean debug = false; 
 	
+	public
+	void init ()
+		throws Exception
+	{
+		debug = "true".equals (getProperty (PROP.DEBUG)); 
+		return; 
+	}
+
 	@Override
 	public 
 	Alteration intercept (HttpServletRequest req, HttpServletResponse res, DispatchContext dc) 
 		throws Exception
 	{
-//		OAuthFacebookRedirect2Interceptor.logRequest (logger, req); 		
+		if (debug) {
+			OAuthFacebookRedirect2Interceptor.logRequest (logger, req);
+		}
 		
 		// Read the settings and get the base redirect url 
 		
@@ -72,21 +85,61 @@ public class RedirectFacebookAuthUrl2Interceptor
 		    "redirect_uri=" + URLEncoder.encode (oauthUrl, "UTF-8") + "&" +
 		    "scope=" + permissions;
 				
+        // Output some debugging information if we need to 
+        
+        if (debug) { 
+        	logger.info ("REDIRECTING TO: \n  " + url); 
+        }
+        
 		// Output a page that will redirect them to the specified page. 
 		
-		final StringBuffer html = new StringBuffer();
-		html.append("<script type=\"text/javascript\">");
-		html.append("var frame = self;");
-		html.append("while (frame != parent)");
-		html.append("  frame = parent;");
-		html.append("frame.location = \"" + url + "\";");
-		html.append("</script>");
-		
+		sendRedirectPage (res, url, debug); 
+		return ABORT;
+	}
+	
+	/**
+	 * 
+	 * @param res
+	 * @param url
+	 * @param debug
+	 * @throws IOException
+	 */
+	
+	public static
+	void sendRedirectPage (final HttpServletResponse res, final String url, final boolean debug) 
+			throws IOException
+	{
+		final StringBuffer html = getRedirectPage (url, debug); 
 		res.setContentType ("text/html");
 		res.setContentLength (html.length());
 		res.getOutputStream().write(html.toString().getBytes());
-		
-		return ABORT;
+		return; 
+	}
+	
+	/**
+	 * 
+	 * @param url
+	 * @param debug
+	 * @return
+	 */
+	
+	public static
+	StringBuffer getRedirectPage (final String url, final boolean debug)
+	{
+		final StringBuffer html = new StringBuffer();
+//		if (debug) { 
+//			html.append ("<h1>Debug Mode</h1>"); 
+//			html.append ("Redirecting to: <pre>" + url + "</pre>");
+//			html.append ("Click <a href='" + url + "'>here</a> to continue."); 
+//		} else { 
+			html.append("<script type=\"text/javascript\">");
+			html.append("var frame = self;");
+			html.append("while (frame != parent)");
+			html.append("  frame = parent;");
+			html.append("frame.location = \"" + url + "\";");
+			html.append("</script>");			
+//		}
+		return html; 
 	}
 }
 
