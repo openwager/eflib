@@ -16,7 +16,7 @@
 	<property name="pom.group" value="etherfirma" />
 	<property name="pom.artifact" value="eflib" />
 	<property name="javac.debug" value="true" /> 
-	<property name="javac.debug.level" value="lines, vars, source" /> 
+	<property name="javac.debug.level" value="lines,vars,source" /> 
 
 	<snapshot text="${output}" property="snapshot" />
 	
@@ -124,7 +124,7 @@ Available targets:
 	<target name="build" description="" depends="copy-resources" >
 		<mkdir dir="${classes.dir}" />
 		<!-- Compile the Java classes -->
-		<javac destdir="${classes.dir}" source="1.5" debug="${javac.debug}" debugLevel="${javac.debugLevel}" includeantruntime="false">
+		<javac destdir="${classes.dir}"  source="${javac.source}" target="${javac.target}"  debug="${javac.debug}" debugLevel="${javac.debug.level}" includeantruntime="false">
 			<classpath>
 				<fileset dir="${lib.dir}">
 					<include name="**/*.jar"/>
