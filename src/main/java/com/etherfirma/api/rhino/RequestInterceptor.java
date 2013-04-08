@@ -21,7 +21,7 @@ import com.tessera.intercept.*;
 public class RequestInterceptor
 	extends InterceptorSupport
 {
-	private static final Logger logger = Logger.getLogger (RequestInterceptor.class); 
+//	private static final Logger logger = Logger.getLogger (RequestInterceptor.class); 
 	
 	public
 	RequestInterceptor (Map<String, String> props)

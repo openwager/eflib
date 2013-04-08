@@ -113,6 +113,7 @@ public class Settings
 		return value; 
 	}
 	
+	@SuppressWarnings("unchecked")
 	public
 	Object lookup (final String path)
 	{
@@ -138,6 +139,7 @@ public class Settings
 		return obj; 
 	}
 	
+	@SuppressWarnings("unchecked")
 	public
 	Settings extract (final String path)
 	{
@@ -165,6 +167,7 @@ public class Settings
 		return getChild (new String [] { key }, create); 
 	}
 	
+	@SuppressWarnings("unchecked")
 	public
 	Map<String, Object> getChild (final String [] keys, final boolean create)
 		throws IllegalStateException
@@ -253,6 +256,7 @@ public class Settings
 		return; 
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected
 	Map<String, Object> parse (final JSONObject json) 
 		throws JSONException
@@ -287,6 +291,7 @@ public class Settings
 		return; 
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected
 	void merge (final Map<String, Object> from, final Map<String, Object> into)
 	{
@@ -303,6 +308,7 @@ public class Settings
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected
 	Map<String, Object> getChild (final String key, final Map<String, Object> map, final boolean create)
 		throws IllegalStateException
@@ -339,6 +345,7 @@ public class Settings
 		return obj; 
 	}
 	
+	@SuppressWarnings("unchecked")
 	public
 	JSONObject toJSON (final Map<String, Object> map)
 		throws JSONException 

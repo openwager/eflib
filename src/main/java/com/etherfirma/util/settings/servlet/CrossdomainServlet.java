@@ -34,6 +34,7 @@ public class CrossdomainServlet
 		return; 
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected static
 	Document createDocument (final Settings s) 
 		throws ServletException, IOException

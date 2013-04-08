@@ -46,6 +46,7 @@ public class UpdateRhinoInterceptor
 		public String ATTR = "results"; 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Alteration intercept (HttpServletRequest req, HttpServletResponse res, DispatchContext dc)
 		throws Exception 

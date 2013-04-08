@@ -109,6 +109,7 @@ public class FacebookAPI
 		return obj; 
 	}
 		
+	@SuppressWarnings("deprecation")
 	public 
 	String invoke (final String altAccessToken, final Map<String, String> addlParams)
 		throws IOException
