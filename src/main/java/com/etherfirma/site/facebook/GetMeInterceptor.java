@@ -10,7 +10,6 @@ import org.json.*;
 import com.etherfirma.svc.facebook.*;
 import com.tessera.dispatch.*;
 import com.tessera.intercept.*;
-import com.weaselworks.util.*;
 
 /**
  * 

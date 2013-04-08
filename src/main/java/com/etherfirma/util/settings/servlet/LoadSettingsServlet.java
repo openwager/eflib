@@ -13,6 +13,7 @@ import com.etherfirma.util.settings.*;
  * 
  */
 
+@SuppressWarnings("serial")
 public class LoadSettingsServlet
 	extends HttpServlet
 {

@@ -1,27 +1,18 @@
 package com.etherfirma.site.facebook;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.etherfirma.svc.facebook.FacebookAPI;
 import com.etherfirma.svc.facebook.FacebookUtil;
 import com.etherfirma.util.settings.Settings;
 import com.etherfirma.util.settings.SettingsUtil;
 import com.tessera.intercept.PredicateInterceptorSupport;
-import com.weaselworks.util.StringUtil;
 
 /**
  * 

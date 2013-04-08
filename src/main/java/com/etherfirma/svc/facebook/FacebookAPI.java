@@ -205,6 +205,7 @@ public class FacebookAPI
 	 *
 	 */
 	
+	@SuppressWarnings("serial")
 	public static class FacebookIOException 
 		extends IOException
 	{

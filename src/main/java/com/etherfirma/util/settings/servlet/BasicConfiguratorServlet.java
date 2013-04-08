@@ -11,6 +11,7 @@ import org.apache.log4j.*;
  *
  */
 
+@SuppressWarnings("serial")
 public class BasicConfiguratorServlet
 	extends HttpServlet
 {

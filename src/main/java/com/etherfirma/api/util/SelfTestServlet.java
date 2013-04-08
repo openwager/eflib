@@ -1,7 +1,6 @@
 package com.etherfirma.api.util;
 
 import java.io.*;
-import java.util.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -16,6 +15,7 @@ import com.weaselworks.util.*;
  *
  */
 
+@SuppressWarnings("serial")
 public class SelfTestServlet
 	extends HttpServlet
 {	

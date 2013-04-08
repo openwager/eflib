@@ -1,6 +1,5 @@
 package com.etherfirma.api.rhino;
 
-import java.util.*;
 import org.apache.log4j.*;
 import javax.servlet.*;
 import org.mozilla.javascript.*;
