@@ -8,6 +8,9 @@ group = 'com.etherfirma'
 archivesBaseName = 'eflib'
 description = 'The Enterprise Java library'
 
+targetCompatibility = "1.5"
+sourceCompatibility = "1.5"
+
 test {
     useTestNG()
 }
