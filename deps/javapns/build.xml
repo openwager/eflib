@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+
+<project name="javapns" default="deploy-javapns" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" >
+ 
+  <property file="${user.home}/build.properties" />
+  <include file="../../build-repos.xml" />
+  
+  <property name="version" value="2.2" /> 
+  <property name="artifact" value="javapns-${version}" /> 
+  <property name="url" value="https://javapns.googlecode.com/files/JavaPNS_2.2_complete.zip" /> 
+
+  <property name="target.dir" value="${basedir}/target" />
+  <property name="src.dir" value="${basedir}/src" /> 
+  <property name="pom.dir" value="${src.dir}/main/pom" /> 
+
+  <!-- TARGET: clean --> 
+
+  <target name="clean">
+    <delete dir="${target.dir}" failonerror="false" />
+  </target>
+
+  <!-- TARGET: fetch --> 
+
+  <target name="fetch">
+    <mkdir dir="${target.dir}" /> 
+      <exec executable="curl">
+	<arg value="${url}" /> 
+	<arg value="-o"/>
+	<arg value="${target.dir}/${artifact}.zip"/>
+      </exec>
+      <exec executable="unzip">
+	<arg value="${target.dir}/${artifact}.zip" /> 
+	<arg value="-d" /> 
+	<arg value="${target.dir}" /> 
+      </exec>
+  </target>
+
+  <!-- TARGET: package --> 
+
+  <target name="package" depends="fetch">
+    <copy file="${target.dir}/javaPNS_${version}.jar" tofile="${target.dir}/${artifact}.jar" /> 
+    <jar destfile="${target.dir}/${artifact}-src.jar" basedir="${target.dir}/src" />
+    <jar destfile="${target.dir}/${artifact}-doc.jar" basedir="${target.dir}/doc" />
+  </target>
+
+  <!-- TARGET: pom-javapns -->
+
+  <target name="make-pom">
+    <filter token="pom.group" value="com.etherfirma" />
+    <filter token="pom.artifact" value="javapns" /> 
+    <filter token="version" value="${version}" />
+    <copy tofile="${target.dir}/javapns-pom.xml" file="${pom.dir}/pom.xml" filtering="true" />
+    <artifact:pom id="javapns.pom" file="${target.dir}/javapns-pom.xml" />
+  </target>
+  
+  <!-- TARGET: deploy-javapns -->
+  
+  <target name="deploy-javapns" depends="make-pom,package">
+    <artifact:deploy file="${target.dir}/${artifact}.jar">
+      <pom refid="javapns.pom" />
+      <artifact:remoteRepository refid="etherfirma.thirdparty" />
+      <attach file="${target.dir}/${artifact}-src.jar" type="jar" classifier="sources"/>
+      <attach file="${target.dir}/${artifact}-doc.jar" type="jar" classifier="javadoc"/>
+    </artifact:deploy>
+  </target>
+
+</project>
