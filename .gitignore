@@ -6,3 +6,4 @@ bin
 target
 \#*#
 *~
+deps/javapns/build.bat

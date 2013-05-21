@@ -24,15 +24,12 @@
   <target name="fetch">
     <mkdir dir="${target.dir}" /> 
       <exec executable="curl">
-	<arg value="${url}" /> 
-	<arg value="-o"/>
-	<arg value="${target.dir}/${artifact}.zip"/>
+		<arg value="${url}" /> 
+		<arg value="-k"/>
+		<arg value="-o"/>
+		<arg value="${target.dir}/${artifact}.zip"/>
       </exec>
-      <exec executable="unzip">
-	<arg value="${target.dir}/${artifact}.zip" /> 
-	<arg value="-d" /> 
-	<arg value="${target.dir}" /> 
-      </exec>
+	  <unzip src="${target.dir}/${artifact}.zip" dest="${target.dir}"/> 
   </target>
 
   <!-- TARGET: package --> 
@@ -64,4 +61,14 @@
     </artifact:deploy>
   </target>
 
+  <!-- TARGET: deploy-javapns-local -->
+  
+  <target name="deploy-javapns-local" depends="make-pom,package">
+    <artifact:install file="${target.dir}/${artifact}.jar">
+      <pom refid="javapns.pom" />
+      <attach file="${target.dir}/${artifact}-src.jar" type="jar" classifier="sources"/>
+      <attach file="${target.dir}/${artifact}-doc.jar" type="jar" classifier="javadoc"/>
+    </artifact:install>
+  </target>
+  
 </project>
