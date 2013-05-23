@@ -6,7 +6,7 @@
   <include file="../../build-repos.xml" />
   
   <property name="version" value="2.2" /> 
-  <property name="artifact" value="javapns-${version}" /> 
+  <property name="artifact" value="JavaPNS-${version}" /> 
   <property name="url" value="https://javapns.googlecode.com/files/JavaPNS_2.2_complete.zip" /> 
 
   <property name="target.dir" value="${basedir}/target" />
@@ -44,7 +44,7 @@
 
   <target name="make-pom">
     <filter token="pom.group" value="com.etherfirma" />
-    <filter token="pom.artifact" value="javapns" /> 
+    <filter token="pom.artifact" value="JavaPNS" /> 
     <filter token="version" value="${version}" />
     <copy tofile="${target.dir}/javapns-pom.xml" file="${pom.dir}/pom.xml" filtering="true" />
     <artifact:pom id="javapns.pom" file="${target.dir}/javapns-pom.xml" />
