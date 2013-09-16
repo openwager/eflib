@@ -54,6 +54,26 @@ public class RhinoUtil
 		sc.removeAttribute (ATTR.NAME); 
 		return; 
 	}
+	
+	public static
+	Object getFunction(String functionFullQualifiedName, Scriptable scope) 
+	{
+		final String parts[] = functionFullQualifiedName.split ("\\.");
+		Scriptable scriptable = scope;
+		for (int i = 0; i < parts.length; i++) {
+			while (! scriptable.has(parts[i], scope)) {
+				scriptable = scriptable.getPrototype ();
+			}
+			Object object = scriptable.get (parts[i], scope);
+			if (object instanceof Scriptable) {
+				scriptable = (Scriptable)object;
+			} else {
+				break;
+			}
+		}
+
+		return scriptable;
+	}
 }
 
 // EOF

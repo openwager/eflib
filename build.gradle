@@ -25,8 +25,8 @@ repositories {
   maven { 
     name "Etherfirma RELEASES"
     credentials { 
-      username = 'deployer'
-      password = 'squidly'
+      username = mavenUser
+      password = mavenPassword
     } 
     url 'http://maven.etherfirma.com:8081/nexus/content/repositories/releases/'
   }
@@ -34,8 +34,8 @@ repositories {
   maven { 
     name "Etherfirma SNAPSHOTS"
     credentials { 
-      username = 'deployer'
-      password = 'squidly'
+      username = mavenUser
+      password = mavenPassword
     } 
     url 'http://maven.etherfirma.com:8081/nexus/content/repositories/snapshots/'
   }

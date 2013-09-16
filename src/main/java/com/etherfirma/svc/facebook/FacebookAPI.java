@@ -15,6 +15,10 @@ import org.json.*;
 import com.weaselworks.io.*;
 
 /**
+ * This needs to be migrated to the HttpClient class and some timeout functionality 
+ * added to it. 
+ * 
+ * http://stackoverflow.com/questions/9873810/using-apache-httpclient-how-to-set-the-timeout-on-a-request-and-response
  * 
  * @author crawford
  *

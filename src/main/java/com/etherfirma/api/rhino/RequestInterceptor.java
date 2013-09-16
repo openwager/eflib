@@ -65,6 +65,8 @@ public class RequestInterceptor
 		return; 
 	}
 	
+	public static final String CONTEXT_SETTER = "CORE.contextSetter";
+	
 	@Override
 	public Alteration intercept (HttpServletRequest req, HttpServletResponse res, DispatchContext dc)
 		throws Exception 
@@ -88,14 +90,15 @@ public class RequestInterceptor
 
 			String errmsg = null;
 			if (addThreadLocal) {
-				String javascriptContextSetterFunction = "CORE.contextSetter";
-				final Object possibleContextSetter = c.evaluateString (threadScope, javascriptContextSetterFunction, "", 1, null);
-				if ( possibleContextSetter instanceof Function) {
+//				String javascriptContextSetterFunction = "CORE.contextSetter";
+//				final Object possibleContextSetter = c.evaluateString (threadScope, javascriptContextSetterFunction, "", 1, null);
+				final Object possibleContextSetter = RhinoUtil.getFunction(CONTEXT_SETTER, threadScope);
+				if (possibleContextSetter instanceof Function) {
 					final Function contextSetter = (Function) possibleContextSetter;
 				    final Object fArgs[] = { req, res, dc };
 				    contextSetter.call (c, threadScope, threadScope, fArgs);
 				} else {
-					String error = "Undefined or not a function: " + javascriptContextSetterFunction; 
+					String error = "Undefined or not a function: " + CONTEXT_SETTER; 
 					logger.error (error);
 					errmsg += error + " - ";
 				}
@@ -103,7 +106,8 @@ public class RequestInterceptor
 			
 			String response = null; 
 
-			final Object possibleFunction = c.evaluateString (threadScope, javascriptFunction, "", 1, null) ;						
+//			final Object possibleFunction = c.evaluateString (threadScope, javascriptFunction, "", 1, null) ;
+			final Object possibleFunction = RhinoUtil.getFunction(javascriptFunction, threadScope); 
 			if (possibleFunction instanceof Function) {
 			    final Object functionArgs[] = { req, res, dc };
 			    final Function f = (Function) possibleFunction;
