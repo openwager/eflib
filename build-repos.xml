@@ -7,16 +7,17 @@
 
   <artifact:localRepository id="local" path="${user.home}/.m2/repository/" /> 
 
-	<artifact:remoteRepository id="etherfirma.thirdparty" url="http://maven.etherfirma.com:8081/nexus/content/repositories/thirdparty/" >
-		<authentication username="${maven.username}" password="${maven.password}" />
-	</artifact:remoteRepository>
-
-	<artifact:remoteRepository id="etherfirma.releases" url="http://maven.etherfirma.com:8081/nexus/content/repositories/releases/" >
+	<artifact:remoteRepository id="openwager.thirdparty" url="http://maven.openwager.com:8081/nexus/content/repositories/thirdparty/" >
 		<authentication username="${maven.username}" password="${maven.password}" />
 	</artifact:remoteRepository>
 	
-	<artifact:remoteRepository id="etherfirma.snapshots" url="http://maven.etherfirma.com:8081/nexus/content/repositories/snapshots/" >
+	<artifact:remoteRepository id="openwager.releases" url="http://maven.openwager.com:8081/nexus/content/repositories/releases/" >
 		<authentication username="${maven.username}" password="${maven.password}" />
+	</artifact:remoteRepository>
+	
+	<artifact:remoteRepository id="openwager.snapshots" url="http://maven.openwager.com:8081/nexus/content/repositories/snapshots/" >
+	  <artifact:snapshots updatePolicy="always" /> 
+	  <authentication username="${maven.username}" password="${maven.password}" />
 	</artifact:remoteRepository>
 
 </project>
