@@ -1,7 +1,13 @@
 package com.etherfirma.util.settings;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import org.apache.log4j.*;
+import org.json.*;
 
 /**
  * 
@@ -11,6 +17,8 @@ import javax.servlet.http.*;
 
 public class SettingsUtil
 {
+	private static final Logger logger = Logger.getLogger (SettingsUtil.class); 
+	
 	private 
 	SettingsUtil ()
 	{
@@ -25,6 +33,12 @@ public class SettingsUtil
 	}
 	
 	public static final String SERVLET_CONTEXT_ATTR = "_settings"; 
+	
+	/**
+	 * 
+	 * @param sc
+	 * @return
+	 */
 	
 	public static
 	Settings getSettings (final ServletContext sc) 
@@ -60,6 +74,39 @@ public class SettingsUtil
 	{
 		sc.removeAttribute (SERVLET_CONTEXT_ATTR);
 		return; 
+	}
+	
+	/**
+	 * Loads new settings from the specified path. 
+	 * 
+	 * @param path
+	 * @param sc
+	 */
+	
+	public static
+	Settings loadSettings (final String path, final ServletContext sc)
+		throws IOException, JSONException
+	{
+        final Settings s = SettingsUtil.getSettings (sc); 
+
+        if (path.startsWith ("/WEB-INF")) { 
+			final String realpath = sc.getRealPath (path); 
+        	final File file = new File (realpath); 
+        	if (! file.exists ()) { 
+        		logger.error ("File not found: " + path); 
+        	} else { 
+        		try { 
+        			s.merge (file);
+        		}
+        		catch (final Exception e) { 
+        			logger.error ("Error merging settings from " + realpath, e); 
+        		}
+        	}
+        } else { 
+        	s.mergeResource (path); 
+        }
+
+        return s; 
 	}
 }
 

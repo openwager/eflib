@@ -43,24 +43,7 @@ public class LoadSettingsInterceptor
 	            break;
 	        }
 	        final ServletContext sc = dc.getDispatcher ().getServletContext (); 
-	        final Settings s = SettingsUtil.getSettings (sc); 
-	        if (path.startsWith ("/WEB-INF")) { 
-				final String realpath = sc.getRealPath (path); 
-	        	final File file = new File (realpath); 
-	        	if (! file.exists ()) { 
-	        		logger.error ("File not found: " + path); 
-	        	} else { 
-	        		try { 
-	        			s.merge (file);
-	        		}
-	        		catch (final Exception e) { 
-	        			logger.error ("Error merging settings from " + realpath, e); 
-	        		}
-	        	}
-	        } else { 
-	        	s.mergeResource (path); 
-	        }
-	 
+	        SettingsUtil.loadSettings(path, sc);
 	        cnt ++;
 	    }
 	
