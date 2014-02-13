@@ -78,6 +78,7 @@ public class UpdateRhinoInterceptor
 		ScriptableObject.putProperty(sharedScope, "servletContext", wrapped);
 		wrapped = Context.javaToJS (dc, sharedScope); 
 		ScriptableObject.putProperty (sharedScope, "_dc", wrapped); 
+		ScriptableObject.putProperty (sharedScope, "dc", wrapped); 
 		
 		if (hasProperty (PROP.PATH)) { 
 			loadScript (getProperty (PROP.PATH), disp, sharedScope, output); 
