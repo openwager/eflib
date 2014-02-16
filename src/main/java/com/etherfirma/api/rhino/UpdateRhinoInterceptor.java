@@ -161,7 +161,7 @@ public class UpdateRhinoInterceptor
 			for (final File file : files) {
 				final String name = file.getName ().toLowerCase (); 
 				if (! name.startsWith (".")) { 
-					if (file.isDirectory () || name.endsWith (".js")) {
+					if ((file.isDirectory () && ! name.endsWith ("-ignored")) || name.endsWith (".js") ) {
 						loadScripts (file, sharedScope, output);
 					} else { 
 						logger.info ("Ignoring file: " + file.getName ());
