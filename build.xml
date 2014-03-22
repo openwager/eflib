@@ -97,6 +97,8 @@ Available targets:
 			<dependency groupId="${commons-logging.group}" artifactId="${commons-logging.artifact}" version="${commons-logging.version}" />
 			<dependency groupId="${javax.mail.group}" artifactId="${javax.mail.artifact}" version="${javax.mail.version}" /> 			
 			<dependency groupId="${javax.activation.group}" artifactId="${javax.activation.artifact}" version="${javax.activation.version}" /> 
+			<dependency groupId="${vertx.group}" artifactId="${vertx.artifact}" version="${vertx.version}" />
+
 		</artifact:dependencies>
 		<copy todir="${lib.dir}">
 			<fileset refid="dependency.fileset" />
