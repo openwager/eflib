@@ -4,9 +4,12 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
+import org.vertx.java.core.json.JsonObject;
+
 import com.etherfirma.util.settings.*;
 import com.tessera.dispatch.*;
 import com.tessera.intercept.*;
+import com.weaselworks.util.JsonObjectUtil;
 
 /**
  * 
@@ -29,8 +32,10 @@ public class GetFacebookAppIdInterceptor
 	Alteration intercept (HttpServletRequest req, HttpServletResponse res, DispatchContext dc)
 		throws Exception 
 	{
-		final Settings settings = SettingsUtil.getSettings (req);
-		final String appId = settings.lookup ("facebook.appId", String.class, true); 
+		final JsonObject settings = SettingsUtil.getSettings (req); 
+		final String appId = JsonObjectUtil.get (settings, "facebook.appId");
+//		final Settings settings = SettingsUtil.getSettings (req);
+//		final String appId = settings.lookup ("facebook.appId", String.class, true); 
 		req.setAttribute ("appId", appId); 
 		return NO_ALTERATION;
 	}

@@ -14,6 +14,8 @@ import com.etherfirma.util.settings.*;
 import com.weaselworks.codec.xml.*;
 
 import org.apache.log4j.*;
+import org.vertx.java.core.json.JsonArray;
+import org.vertx.java.core.json.JsonObject;
 import org.w3c.dom.*;
 
 /**
@@ -36,7 +38,7 @@ public class CrossdomainServlet
 	
 	@SuppressWarnings("unchecked")
 	protected static
-	Document createDocument (final Settings s) 
+	Document createDocument (final JsonObject s) 
 		throws ServletException, IOException
 	{
 		try { 
@@ -54,61 +56,47 @@ public class CrossdomainServlet
 	
 			// Copy over any attributes
 			
-			final Settings attrs = s.extract ("attributes");
-			if (attrs != null) { 
-				final Map<String, Object> props = attrs.getProperties (); 
-				for (final String key : props.keySet ()) { 
-					final Object val = props.get (key); 
-					e1.setAttribute (key, val.toString ()); 
-				}
+			final JsonObject attrs = s.getObject ("attributes");
+			for (final String field : attrs.getFieldNames ()) { 
+				final String value = attrs.getString (field); 
+				e1.setAttribute (field, value); 
 			}
 
 			// Process any allow directives
-			
-			int i = 0; 
-			while (true) { 
-				final String key = "allow" + i;
-				final Object path = s.lookup (key); 
-				if (path == null) { 
-					break; 
-				}
+
+			final JsonArray allow = s.getArray ("allow"); 
+			for (int i = 0; i < allow.size (); i ++) { 
+				final String domain = allow.get (i); 
 				final Element e2 = doc.createElement ("allow-access-from"); 
-				e2.setAttribute ("domain", path.toString ()); 
-				e1.appendChild (e2);  
-					
-				i ++; 
+				e2.setAttribute ("domain", domain); 
+				e1.appendChild (e2);  				
 			}
-			
+						
 			// Process any allow http request headers from directives
 			
-			i = 0; 
-			while (true) { 
-				final String key = "allowHttpRequestHeadersFrom" + i; 
-				final Map<String, Object> obj = (Map<String, Object>) s.lookup (key); 
-				if (obj == null) { 
-					break; 
-				}
-				final Element e3 = doc.createElement ("allow-http-request-headers-from");
-				final String domain = (String) obj.get ("domain"); 
+			final JsonArray ahrh = s.getArray ("allowHttpRequestHeadersFrom");
+			for (int i = 0; i < ahrh.size (); i ++) { 
+				final JsonObject o = ahrh.get (i); 
+				final String domain = o.getString ("domain"); 
 				if (domain == null) { 
-					throw new IOException ("Missing header: " + domain); 
+					throw new IOException ("Missing field: domain");  
 				}
-				e3.setAttribute ("domain",  domain); 
-				final String headers = (String) obj.get ("headers");
+				final String headers = o.getString ("header"); 
 				if (headers == null) { 
-					throw new IOException ("Missing header: " + headers); 
+					throw new IOException ("Missing field: header"); 
 				}
+				
+				final Element e3 = doc.createElement ("allow-http-request-headers-from");
+				e3.setAttribute ("domain",  domain); 
 				e3.setAttribute ("headers", headers);
 				e1.appendChild (e3); 
-				
-				i ++; 
-			}
+			}			
 			
 			// Process <site-control permitted-cross-domain-policies="all" />
 			
-			final Map<String, Object> obj = (Map<String, Object>) s.lookup ("siteControl"); 
-			if (obj != null) { 
-				final String permitted = (String) obj.get ("permittedCrossDomainPolicies"); 
+			final JsonObject siteControl = s.getObject ("siteControl"); 			
+			if (siteControl != null) { 
+				final String permitted = siteControl.getString ("permittedCrossDomainPolicies"); 
 				if (permitted == null) { 
 					throw new IOException ("Missing field: permittedCrossDomainPolicies"); 
 				}
@@ -124,26 +112,6 @@ public class CrossdomainServlet
 		
 		// NOT REACHED
 	}	
-	
-	public static
-	void main (final String [] args)
-		throws Exception
-	{
-		final Settings settings = new Settings (); 
-		settings.merge (new File ("/Users/crawford/Workspace/hot-ticket/root/src/main/settings/hot-ticket-dev/crossdomain.json")); 
-		final Settings crossdomain = settings.extract ("crossdomain"); 
-		crossdomain.dump ();
-		final Document doc = createDocument (crossdomain); 
-		final Element elem = doc.getDocumentElement ();
-		
-		dump (elem, System.out);
-		
-		final byte [] bytes = dump (elem); 
-		System.err.println ("" + bytes.length + " bytes."); 
-		System.err.println (new String (bytes)); 
-		return; 
-		
-	}
 	
 	public static 
 	void dump (final Element el, final OutputStream os)
@@ -181,9 +149,9 @@ public class CrossdomainServlet
 	void doGet (final HttpServletRequest req, final HttpServletResponse res)
 		throws ServletException, IOException 
 	{		
-		final Settings s = SettingsUtil.getSettings (req); 
+		final JsonObject s = SettingsUtil.getSettings (req); 
 	
-		final Settings cd = s.extract ("crossdomain");
+		final JsonObject cd = s.getObject ("crossdomain");
 		if (cd == null) { 
 			logger.warn ("No crossdomain settings loaded."); 
 			return; 

@@ -7,6 +7,7 @@ import java.util.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.*;
+import org.vertx.java.core.json.JsonObject;
 
 import com.etherfirma.util.settings.*;
 import com.tessera.dispatch.*;
@@ -52,11 +53,16 @@ public class RedirectFacebookAuthUrl2Interceptor
 		
 		// Read the settings and get the base redirect url 
 		
-		final Settings settings = SettingsUtil.getSettings (req);
-		final String permissions = settings.lookup ("facebook.permissions", String.class, true); 
-		final String appId = settings.lookup ("facebook.appId", String.class, true); 
-		String oauthUrl = req.getScheme () + "://" + settings.lookup ("facebook.oauthRedirect", String.class, true);
+		final JsonObject settings = SettingsUtil.getSettings (req);
+		final String permissions = JsonObjectUtil.get (settings, "facebook.permissions"); 
+		final String appId = JsonObjectUtil.get (settings, "facebook.appId"); 
+		String oauthUrl = req.getScheme () + "://" + JsonObjectUtil.get (settings, "facebook.oauthRedirect");
 			
+//		final Settings settings = SettingsUtil.getSettings (req);
+//		final String permissions = settings.lookup ("facebook.permissions", String.class, true); 
+//		final String appId = settings.lookup ("facebook.appId", String.class, true); 
+//		String oauthUrl = req.getScheme () + "://" + settings.lookup ("facebook.oauthRedirect", String.class, true);
+
 		// Extract the GET parameters from the request
 		
 		final String queryString = req.getQueryString (); 

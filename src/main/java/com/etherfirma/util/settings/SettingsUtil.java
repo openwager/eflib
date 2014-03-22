@@ -1,13 +1,19 @@
 package com.etherfirma.util.settings;
 
+import com.weaselworks.io.*;
+import com.weaselworks.util.JsonObjectUtil;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.*;
 import org.json.*;
+import org.vertx.java.core.json.JsonObject;
 
 /**
  * 
@@ -26,7 +32,7 @@ public class SettingsUtil
 	}
 	
 	public static
-	Settings getSettings (final HttpServletRequest req)
+	JsonObject getSettings (final HttpServletRequest req)
 	{
 		final ServletContext sc = req.getSession ().getServletContext ();
 		return getSettings (sc); 
@@ -41,11 +47,11 @@ public class SettingsUtil
 	 */
 	
 	public static
-	Settings getSettings (final ServletContext sc) 
+	JsonObject getSettings (final ServletContext sc) 
 	{
-		Settings s = (Settings) sc.getAttribute (SERVLET_CONTEXT_ATTR); 
+		JsonObject s = (JsonObject) sc.getAttribute (SERVLET_CONTEXT_ATTR); 
 		if (s == null) {
-			s = new Settings (); 
+			s = new JsonObject (); 
 			sc.setAttribute (SERVLET_CONTEXT_ATTR, s); 
 		}
 		return s; 
@@ -76,6 +82,68 @@ public class SettingsUtil
 		return; 
 	}
 	
+	
+	/**	
+	 * 
+	 * @param is
+	 * @param src
+	 * @param sc
+	 * @return
+	 * @throws IOException
+	 */
+
+	public static
+	void loadSettings (final InputStream is, final String src, final ServletContext sc) 
+		throws IOException 
+	{
+		final JsonObject settings = SettingsUtil.getSettings (sc); 
+		final String json = IOUtil.readFully (is); 
+		try { 
+			final JsonObject merge = new JsonObject (json); 
+			JsonObjectUtil.merge (settings, merge); 
+		}
+		catch (final Exception e) { 
+			throw new IOException ("Error loading settings from " + src, e); 
+		}
+		return;  
+	}
+	
+	/**
+	 * 
+	 * @param file
+	 * @param src
+	 * @param sc
+	 * @return
+	 * @throws IOException
+	 */
+	
+	public static
+	void loadSettings (final File path, final String src, final ServletContext sc)
+		throws IOException
+	{
+		if (! path.exists ()) { 
+			throw new IOException ("File not found: " + src);  
+		} 			 
+		
+		if (path.isDirectory ()) { 
+			for (final File file : path.listFiles ()) {
+				final String name = file.getName ().toLowerCase (); 
+				if (! name.startsWith (".")) { 
+					if (file.isDirectory () || name.endsWith (".json")) {
+						loadSettings (file, file.getAbsolutePath (), sc); 
+					} else { 
+						logger.info ("Ignoring file: " + file.getName ()); 
+					}
+				}
+			}
+		} else { 
+			final InputStream is = new FileInputStream (path); 
+			loadSettings (is, src, sc);
+		}
+		
+		return; 
+	}
+	
 	/**
 	 * Loads new settings from the specified path. 
 	 * 
@@ -84,29 +152,24 @@ public class SettingsUtil
 	 */
 	
 	public static
-	Settings loadSettings (final String path, final ServletContext sc)
-		throws IOException, JSONException
+	JsonObject loadSettings (final String path, final ServletContext sc)
+		throws IOException
 	{
-        final Settings s = SettingsUtil.getSettings (sc); 
-
-        if (path.startsWith ("/WEB-INF")) { 
+		if (path.startsWith ("/WEB-INF")) { 
 			final String realpath = sc.getRealPath (path); 
-        	final File file = new File (realpath); 
-        	if (! file.exists ()) { 
-        		logger.error ("File not found: " + path); 
-        	} else { 
-        		try { 
-        			s.merge (file);
-        		}
-        		catch (final Exception e) { 
-        			logger.error ("Error merging settings from " + realpath, e); 
-        		}
-        	}
-        } else { 
-        	s.mergeResource (path); 
-        }
+			final File file = new File (realpath); 
+			loadSettings (file, realpath, sc); 
+		} else { 
+			final ClassLoader cl = Thread.currentThread ().getContextClassLoader (); 
+			final InputStream is = cl.getResourceAsStream (path);
+			if (is == null) { 
+				throw new IOException ("Resource not found: " + path); 
+			}
+			loadSettings (is, path, sc); 
+		}
 
-        return s; 
+		final JsonObject settings = SettingsUtil.getSettings (sc); 
+		return settings; 
 	}
 }
 

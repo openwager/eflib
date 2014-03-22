@@ -8,11 +8,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.vertx.java.core.json.JsonObject;
 
 import com.etherfirma.svc.facebook.FacebookUtil;
 import com.etherfirma.util.settings.Settings;
 import com.etherfirma.util.settings.SettingsUtil;
 import com.tessera.intercept.PredicateInterceptorSupport;
+import com.weaselworks.util.JsonObjectUtil;
 
 /**
  * 
@@ -55,9 +57,14 @@ public class IfFacebookAuthorizedInterceptor
 			OAuthFacebookRedirect2Interceptor.logRequest (logger, req);
 		}
 
-		final Settings settings = SettingsUtil.getSettings (req);		
-		final String fbAppId = settings.lookup ("facebook.appId", String.class, true); 			
-		final String fbAppSecret = settings.lookup ("facebook.appSecret", String.class, true);
+		final JsonObject settings = SettingsUtil.getSettings (req);	
+		final String fbAppId = JsonObjectUtil.get (settings, "facebook.appId"); 			
+		final String fbAppSecret = JsonObjectUtil.get (settings, "facebook.appSecret");
+		// TODO: error checking
+
+		//				final Settings settings = SettingsUtil.getSettings (req);	
+		//				final String fbAppId = settings.lookup ("facebook.appId", String.class, true); 			
+		//				final String fbAppSecret = settings.lookup ("facebook.appSecret", String.class, true);
 
 		// Handle the case where we're injecting an access token manually. This is 
 		// usually because we're trying to allow a developer or customer service to 

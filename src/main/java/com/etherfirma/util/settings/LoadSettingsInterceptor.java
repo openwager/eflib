@@ -43,7 +43,7 @@ public class LoadSettingsInterceptor
 	            break;
 	        }
 	        final ServletContext sc = dc.getDispatcher ().getServletContext (); 
-	        SettingsUtil.loadSettings(path, sc);
+	        SettingsUtil.loadSettings (path, sc);
 	        cnt ++;
 	    }
 	

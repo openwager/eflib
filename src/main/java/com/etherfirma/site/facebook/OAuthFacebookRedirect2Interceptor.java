@@ -6,6 +6,7 @@ import java.util.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
+import org.vertx.java.core.json.JsonObject;
 
 import com.etherfirma.svc.facebook.*;
 import com.etherfirma.util.settings.*;
@@ -94,11 +95,17 @@ public class OAuthFacebookRedirect2Interceptor
 	
 		// Load the settings (contains the appId and appSecret)
 		
-		final Settings settings = SettingsUtil.getSettings (req);		
-		final String appId = settings.lookup ("facebook.appId", String.class, true); 
-		final String appSecret = settings.lookup ("facebook.appSecret", String.class, true);
-		final String facebookHandle = settings.lookup ("facebook.facebookHandle", String.class, true); 
-	
+		final JsonObject settings = SettingsUtil.getSettings (req);		
+		final String appId = JsonObjectUtil.get (settings, "facebook.appId"); 
+		final String appSecret = JsonObjectUtil.get (settings, "facebook.appSecret");
+		final String facebookHandle = JsonObjectUtil.get (settings, "facebook.facebookHandle");
+		// TODO: Error checking? 
+
+//		final Settings settings = SettingsUtil.getSettings (req);		
+//		final String appId = settings.lookup ("facebook.appId", String.class, true); 
+//		final String appSecret = settings.lookup ("facebook.appSecret", String.class, true);
+//		final String facebookHandle = settings.lookup ("facebook.facebookHandle", String.class, true); 
+		
 		// Otherwise, we need to redirect to facebook to get their approval
 		
 		String paramsString = ""; 

@@ -9,9 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.vertx.java.core.json.JsonObject;
 
 import com.etherfirma.util.settings.Settings;
 import com.etherfirma.util.settings.SettingsUtil;
+import com.weaselworks.util.JsonObjectUtil;
 
 /**
  * Various utility methods for working with the {@link FacebookAPI} class. 
@@ -59,9 +61,14 @@ public class FacebookUtil
 	{
 		// Get the appId and appSecret from the settings
 		
-		final Settings settings = SettingsUtil.getSettings (req);		
-		final String appId = settings.lookup ("facebook.appId", String.class, true); 
-		final String appSecret = settings.lookup ("facebook.appSecret", String.class, true);
+//		final Settings settings = SettingsUtil.getSettings (req);		
+//		final String appId = settings.lookup ("facebook.appId", String.class, true); 
+//		final String appSecret = settings.lookup ("facebook.appSecret", String.class, true);
+
+		final JsonObject settings = SettingsUtil.getSettings (req);	
+		final String appId = JsonObjectUtil.get (settings, "facebook.appId"); 			
+		final String appSecret = JsonObjectUtil.get (settings, "facebook.appSecret");
+		// TODO: error checking
 
 		// And fetch the app accessToken from the graph API
 		

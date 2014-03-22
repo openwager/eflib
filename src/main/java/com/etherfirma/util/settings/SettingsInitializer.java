@@ -9,6 +9,14 @@ import com.etherfirma.util.settings.Settings;
 import com.etherfirma.util.settings.SettingsUtil;
 
 /**
+ * Can be used in the web.xml to cause the settings to be dynamically 
+ * loaded when the container starts up. 
+ *
+ * Add the following stanza to the web.xml: 
+ * 
+ * <listener>
+ * 	<listener-class>com.etherfirma.util.settings.SettingsInitializer</listener-class>
+ * </listener>
  * 
  * @author crawford
  *

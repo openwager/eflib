@@ -37,9 +37,8 @@ public class LoadSettingsServlet
 		logger.info ("Loading settings from: " + path) ;
 
 		// Get the settings object and clear it
-		
-		final Settings s = SettingsUtil.getSettings (sx);
-		s.clear (); 
+
+		SettingsUtil.resetSettings (sx); 
 		
 		// And then load the settings they specified
 		
@@ -50,7 +49,7 @@ public class LoadSettingsServlet
     		logger.error ("File not found: " + path);  
     	} else { 
     		try {
-    			s.merge (file);
+    			SettingsUtil.loadSettings (realpath, sx); 
     		}
     		catch (final Exception e) { 
     			logger.error (e.getMessage (), e); 

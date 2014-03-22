@@ -4,6 +4,8 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
+import org.vertx.java.core.json.JsonObject;
+
 import com.tessera.dispatch.*;
 import com.tessera.intercept.*;
 
@@ -32,7 +34,7 @@ public class GetSettingsInterceptor
 	public Alteration intercept (HttpServletRequest req, HttpServletResponse res, DispatchContext dc)
 		throws Exception 
 	{
-		final Settings settings = SettingsUtil.getSettings (req); 
+		final JsonObject settings = SettingsUtil.getSettings (req); 
 		req.setAttribute (getProperty (PROP.ATTR, DEFAULT.ATTR), settings); 
 		return NO_ALTERATION; 
 	}
