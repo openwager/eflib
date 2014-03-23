@@ -11,7 +11,6 @@ import org.json.JSONObject;
 import org.vertx.java.core.json.JsonObject;
 
 import com.etherfirma.svc.facebook.FacebookUtil;
-import com.etherfirma.util.settings.Settings;
 import com.etherfirma.util.settings.SettingsUtil;
 import com.tessera.intercept.PredicateInterceptorSupport;
 import com.weaselworks.util.JsonObjectUtil;

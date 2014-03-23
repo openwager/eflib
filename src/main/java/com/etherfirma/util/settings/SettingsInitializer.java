@@ -5,7 +5,6 @@ import javax.servlet.ServletContextEvent;
 
 import org.apache.log4j.Logger;
 
-import com.etherfirma.util.settings.Settings;
 import com.etherfirma.util.settings.SettingsUtil;
 
 /**
@@ -30,12 +29,15 @@ public class SettingsInitializer
 	public
 	SettingsInitializer ()
 	{
+		logger.info ("HIYA");
 		return; 
 	}
 	
     public
     void contextInitialized (ServletContextEvent sce) 
     { 
+    	logger.info ("HELLO");
+    	
     	// Get the servlet context reference and save it 
     	
     	try { 
@@ -43,7 +45,8 @@ public class SettingsInitializer
     		SettingsUtil.loadSettings("/WEB-INF/settings", sc);
     	}
     	catch (final Exception e) { 
-    		logger.error (e); 
+    		logger.error (e);
+    		e.printStackTrace (); 
     	}
     	return; 
     } 
