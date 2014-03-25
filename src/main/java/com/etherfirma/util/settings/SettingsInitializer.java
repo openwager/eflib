@@ -29,15 +29,12 @@ public class SettingsInitializer
 	public
 	SettingsInitializer ()
 	{
-		logger.info ("HIYA");
 		return; 
 	}
 	
     public
     void contextInitialized (ServletContextEvent sce) 
-    { 
-    	logger.info ("HELLO");
-    	
+    {     	
     	// Get the servlet context reference and save it 
     	
     	try { 
