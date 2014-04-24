@@ -58,7 +58,7 @@
   <target name="deploy-mongodb-rhino" depends="pom-mongodb-rhino,package">
     <artifact:deploy file="${target.dir}/${artifact}.jar">
       <pom refid="mongodb-rhino.pom" />
-      <artifact:remoteRepository refid="etherfirma.thirdparty" />
+      <artifact:remoteRepository refid="openwager.releases" />
       <attach file="${target.dir}/${artifact}-sources.jar" type="jar" classifier="sources"/>
       <attach file="${target.dir}/${artifact}-javadoc.jar" type="jar" classifier="javadoc"/>
     </artifact:deploy>
