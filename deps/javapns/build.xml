@@ -55,7 +55,7 @@
   <target name="deploy-javapns" depends="make-pom,package">
     <artifact:deploy file="${target.dir}/${artifact}.jar">
       <pom refid="javapns.pom" />
-      <artifact:remoteRepository refid="etherfirma.thirdparty" />
+      <artifact:remoteRepository refid="openwager.releases" />
       <attach file="${target.dir}/${artifact}-src.jar" type="jar" classifier="sources"/>
       <attach file="${target.dir}/${artifact}-doc.jar" type="jar" classifier="javadoc"/>
     </artifact:deploy>
