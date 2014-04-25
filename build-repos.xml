@@ -7,15 +7,15 @@
 
   <artifact:localRepository id="local" path="${user.home}/.m2/repository/" /> 
 
-	<artifact:remoteRepository id="openwager.thirdparty" url="http://${maven.host}:${maven.port}/nexus/content/repositories/thirdparty/" >
+	<artifact:remoteRepository id="openwager.thirdparty" url="http://${maven.host}/nexus/content/repositories/thirdparty/" >
 		<authentication username="${maven.username}" password="${maven.password}" />
 	</artifact:remoteRepository>
 	
-	<artifact:remoteRepository id="openwager.releases" url="http://${maven.host}:${maven.port}/nexus/content/repositories/releases/" >
+	<artifact:remoteRepository id="openwager.releases" url="http://${maven.host}/nexus/content/repositories/releases/" >
 		<authentication username="${maven.username}" password="${maven.password}" />
 	</artifact:remoteRepository>
 	
-	<artifact:remoteRepository id="openwager.snapshots" url="http://${maven.host}:${maven.port}/nexus/content/repositories/snapshots/" >
+	<artifact:remoteRepository id="openwager.snapshots" url="http://${maven.host}/nexus/content/repositories/snapshots/" >
 	  <artifact:snapshots updatePolicy="always" /> 
 	  <authentication username="${maven.username}" password="${maven.password}" />
 	</artifact:remoteRepository>
