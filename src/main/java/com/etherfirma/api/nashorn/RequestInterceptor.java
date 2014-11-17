@@ -46,7 +46,6 @@ public class RequestInterceptor
 
     interface DEFAULT
     {
-        public String JAVASCRIPT_FUNCTION = "NASHORN_DISPATCH";
     }
 
     protected String javascriptFunction;
@@ -58,7 +57,7 @@ public class RequestInterceptor
     public
     void init ()
     {
-        javascriptFunction = getProperty (PROP.JAVASCRIPT_FUNCTION, DEFAULT.JAVASCRIPT_FUNCTION);
+        javascriptFunction = getProperty (PROP.JAVASCRIPT_FUNCTION);
 
         if (hasProperty (PROP.SILENCE)) {
             silence = Boolean.parseBoolean (getProperty (PROP.SILENCE));
@@ -98,7 +97,7 @@ public class RequestInterceptor
         if (contextSetter != null) {
             logger.info ("Invoking " + contextSetter);
             final Invocable invocable = (Invocable) engine;
-            final Object result = invocable.invokeFunction (contextSetter, req, res, dc);
+            final Object result = invocable.invokeFunction ("nashorn_invoker", contextSetter, req, res, dc);
             System.out.println(result);
         } else {
             logger.info ("No context setter.");
@@ -115,7 +114,7 @@ public class RequestInterceptor
 //                   errmsg = "Javascript expression not a function: " + javascriptFunction;
 //                } else {
                     final Invocable invocable = (Invocable) engine;
-                    Object response = invocable.invokeFunction (javascriptFunction, req, res, dc);
+                    Object response = invocable.invokeFunction ("nashorn_invoker", javascriptFunction, req, res, dc);
 //                }
 //            }  else {
 //                errmsg = "Javascript expression incompatible type: " + func.getClass ().getName ();
