@@ -28,7 +28,7 @@ public class ShutdownListener
     	logger.info ("Invoking Javascript shutdown listeners.");
     	// TODO: Hardcoding the name of the shutdown function isn't very elegant. This really
     	// should go as a servlet init parameter or something like that... [crawford] 
-    	invokeShutdownListeners ("MFP.shutdown", sc);
+    	invokeShutdownListeners ("CORE.shutdown", sc);
     	return; 
     }
 
