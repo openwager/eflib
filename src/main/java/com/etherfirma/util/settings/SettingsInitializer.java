@@ -5,8 +5,6 @@ import javax.servlet.ServletContextEvent;
 
 import org.apache.log4j.Logger;
 
-import com.etherfirma.util.settings.SettingsUtil;
-
 /**
  * Can be used in the web.xml to cause the settings to be dynamically 
  * loaded when the container starts up. 

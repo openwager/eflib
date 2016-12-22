@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.vertx.java.core.json.JsonObject;
+import io.vertx.core.json.JsonObject;
 
 import com.etherfirma.util.settings.SettingsUtil;
 import com.weaselworks.util.JsonObjectUtil;

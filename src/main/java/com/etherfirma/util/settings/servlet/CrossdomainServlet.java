@@ -14,8 +14,8 @@ import com.etherfirma.util.settings.*;
 import com.weaselworks.codec.xml.*;
 
 import org.apache.log4j.*;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import org.w3c.dom.*;
 
 /**
@@ -50,17 +50,17 @@ public class CrossdomainServlet extends HttpServlet
 
 			// Copy over any attributes
 
-			final JsonObject attrs = s.getObject ("attributes");
-			for (final String field : attrs.getFieldNames ()) {
+			final JsonObject attrs = s.getJsonObject ("attributes");
+			for (final String field : attrs.fieldNames ()) {
 				final String value = attrs.getString (field);
 				e1.setAttribute (field, value);
 			}
 
 			// Process any allow directives
 
-			final JsonArray allow = s.getArray ("allow");
+			final JsonArray allow = s.getJsonArray ("allow");
 			for (int i = 0; i < allow.size (); i++) {
-				final String domain = allow.get (i);
+				final String domain = allow.getString (i);
 				final Element e2 = doc.createElement ("allow-access-from");
 				e2.setAttribute ("domain", domain);
 				e1.appendChild (e2);
@@ -68,9 +68,9 @@ public class CrossdomainServlet extends HttpServlet
 
 			// Process any allow http request headers from directives
 
-			final JsonArray ahrh = s.getArray ("allowHttpRequestHeadersFrom");
+			final JsonArray ahrh = s.getJsonArray ("allowHttpRequestHeadersFrom");
 			for (int i = 0; i < ahrh.size (); i++) {
-				final JsonObject o = ahrh.get (i);
+				final JsonObject o = ahrh.getJsonObject (i);
 				final String domain = o.getString ("domain");
 				if (domain == null) {
 					throw new IOException ("Missing field: domain");
@@ -88,7 +88,7 @@ public class CrossdomainServlet extends HttpServlet
 
 			// Process <site-control permitted-cross-domain-policies="all" />
 
-			final JsonObject siteControl = s.getObject ("siteControl");
+			final JsonObject siteControl = s.getJsonObject ("siteControl");
 			if (siteControl != null) {
 				final String permitted = siteControl.getString ("permittedCrossDomainPolicies");
 				if (permitted == null) {
@@ -139,7 +139,7 @@ public class CrossdomainServlet extends HttpServlet
 	{
 		final JsonObject s = SettingsUtil.getSettings (req);
 		logger.info (s.encodePrettily ());
-		final JsonObject cd = s.getObject ("crossdomain");
+		final JsonObject cd = s.getJsonObject ("crossdomain");
 		if (cd == null) {
 			logger.warn ("No crossdomain settings loaded.");
 			return;

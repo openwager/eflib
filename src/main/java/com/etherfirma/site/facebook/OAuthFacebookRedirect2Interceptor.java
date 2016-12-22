@@ -6,7 +6,7 @@ import java.util.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
-import org.vertx.java.core.json.JsonObject;
+import io.vertx.core.json.JsonObject;
 
 import com.etherfirma.svc.facebook.*;
 import com.etherfirma.util.settings.*;

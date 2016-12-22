@@ -12,8 +12,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.*;
-import org.json.*;
-import org.vertx.java.core.json.JsonObject;
+import io.vertx.core.json.JsonObject;
 
 /**
  * 
