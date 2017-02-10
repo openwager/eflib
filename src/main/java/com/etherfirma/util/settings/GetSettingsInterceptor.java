@@ -4,7 +4,7 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
-import org.vertx.java.core.json.JsonObject;
+import io.vertx.core.json.JsonObject;
 
 import com.tessera.dispatch.*;
 import com.tessera.intercept.*;

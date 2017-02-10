@@ -8,3 +8,6 @@ target
 \#*#
 *~
 deps/javapns/build.bat
+
+.idea/
+out/

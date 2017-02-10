@@ -3,13 +3,13 @@ apply plugin: 'maven'
 
 defaultTasks 'clean', 'build'
 
-version = '1.0.0-gradle-SNAPSHOT'
+version = 'ow-1.1.0-SNAPSHOT'
 group = 'com.etherfirma' 
 archivesBaseName = 'eflib'
 description = 'The Enterprise Java library'
 
-targetCompatibility = "1.5"
-sourceCompatibility = "1.5"
+targetCompatibility = "1.8"
+sourceCompatibility = "1.8"
 
 test {
     useTestNG()
@@ -20,37 +20,37 @@ configurations {
 }
 
 repositories {
-  mavenCentral ()
+    mavenCentral()
 
-  maven { 
-    name "Etherfirma RELEASES"
-    credentials { 
-      username = mavenUser
-      password = mavenPassword
-    } 
-    url 'http://maven.etherfirma.com:8081/nexus/content/repositories/releases/'
-  }
+    maven {
+        name "OpenWager RELEASES"
+        credentials {
+            username = mavenUser
+            password = mavenPassword
+        }
+        url "http://${mavenHost}/nexus/content/repositories/releases/"
+    }
 
-  maven { 
-    name "Etherfirma SNAPSHOTS"
-    credentials { 
-      username = mavenUser
-      password = mavenPassword
-    } 
-    url 'http://maven.etherfirma.com:8081/nexus/content/repositories/snapshots/'
-  }
+    maven {
+        name "OpenWager SNAPSHOTS"
+        credentials {
+            username = mavenUser
+            password = mavenPassword
+        }
+        url "http://${mavenHost}/nexus/content/repositories/snapshots/"
+    }
 }
 
-uploadArchives { 
+uploadArchives {
   repositories {
-    mavenDeployer { 
+    mavenDeployer {
       configuration = configurations.deployerJars
 
-      snapshotRepository (url: 'http://maven.etherfirma.com:8081/nexus/content/repositories/snapshots') { 
+      snapshotRepository (url: "http://${mavenHost}/nexus/content/repositories/snapshots") {
         authentication (userName: mavenUser, password: mavenPassword)
       }
- 
-      repository (url: 'http://maven.etherfirma.com:8081/nexus/content/repositories/releases/') { 
+
+      repository (url: "http://${mavenHost}/nexus/content/repositories/releases/") {
         authentication (userName: mavenUser, password: mavenPassword)
       }
     }
@@ -63,9 +63,9 @@ dependencies {
   compile 'log4j:log4j:1.2.16'
   compile 'javaee:javaee-api:5'
   compile 'org.testng:testng:6.5.2'
-  compile 'com.etherfirma:efcore:1.1.0-gradle-SNAPSHOT'
-  compile 'com.etherfirma:eflattice:1.0.0-gradle-SNAPSHOT'
-  compile 'com.etherfirma:eftessera:1.0.0-gradle-SNAPSHOT'
+  compile 'com.etherfirma:efcore:ow-1.1.0'
+  compile 'com.etherfirma:eflattice:ow-1.1.0'
+  compile 'com.etherfirma:eftessera:ow-1.1.0'
   compile 'commons-logging:commons-logging:1.1.1'
   compile 'commons-httpclient:commons-httpclient:3.1'
   compile 'commons-codec:commons-codec:1.5'
@@ -73,7 +73,7 @@ dependencies {
   compile 'javax.activation:activation:1.1.1'
   compile 'org.mozilla:rhino:1.7R3'
   compile 'javax.transaction:jta:1.1'
-  compile group: 'io.vertx', name: 'vertx-core', version: '2.1.6'
+  compile group: 'io.vertx', name: 'vertx-core', version: '3.3.3'
 
 //  testCompile group: 'junit', name: 'junit', version: '4.8.+'
     testCompile 'org.testng:testng:6.0.1'

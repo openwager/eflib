@@ -7,7 +7,7 @@ import java.util.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.*;
-import org.vertx.java.core.json.JsonObject;
+import io.vertx.core.json.JsonObject;
 
 import com.etherfirma.util.settings.*;
 import com.tessera.dispatch.*;
