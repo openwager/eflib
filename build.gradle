@@ -3,7 +3,7 @@ apply plugin: 'maven'
 
 defaultTasks 'clean', 'build'
 
-version = 'ow-1.1.0'
+version = 'ow-1.1.1-SNAPSHOT'
 group = 'com.etherfirma' 
 archivesBaseName = 'eflib'
 description = 'The Enterprise Java library'
