@@ -13,7 +13,7 @@
 	<!-- Determine the name of our artifacts based on the version -->
 
 	<property name="output" value="eflib-${version}" />
-	<property name="pom.group" value="etherfirma" />
+	<property name="pom.group" value="com.etherfirma" />
 	<property name="pom.artifact" value="eflib" />
 	<property name="javac.debug" value="true" /> 
 	<property name="javac.debug.level" value="lines,vars,source" /> 
@@ -229,8 +229,6 @@ Available targets:
 		<artifact:deploy file="${target.dir}/${output}.jar">
 			<remoteRepository refid="openwager.releases" />
 			<pom refid="mypom"/>
-			<attach file="${target.dir}/${output}-sources.jar" type="jar" classifier="sources"/>
-			<attach file="${target.dir}/${output}-javadoc.jar" type="jar" classifier="javadoc"/>
 		</artifact:deploy>
 	</target>
 	
