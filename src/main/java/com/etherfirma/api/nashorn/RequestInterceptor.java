@@ -67,7 +67,6 @@ public class RequestInterceptor
         if (contextSetter != null) {
             final Invocable invocable = (Invocable) engine;
             final Object result = invocable.invokeFunction("nashorn_invoker", contextSetter, req, res, dc);
-            System.out.println(result);
         } else {
             logger.error("No context setter.");
         }
